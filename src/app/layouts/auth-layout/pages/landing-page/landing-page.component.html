@@ -1,0 +1,95 @@
+<div class="main-container">
+  <nav class="navbar navbar-light bg-white px-6 px-sm-10 auth-btns">
+    <div class="d-flex flex-column">
+      <img
+        src="/assets/images/landingpage/Chat-Logo.jpg"
+        class="h-60-px pt-2 cursor"
+        alt=""
+      />
+      <!-- <h6 class="text-danger text-end">BETA</h6> -->
+    </div>
+    <div class="d-lg-none d-md-none d-block c-button-landing">
+      <fa-icon [icon]="['fas', 'bars']" (click)="mobileMenu()" />
+    </div>
+    <div class="landing-btn d-none d-md-block d-lg-block">
+      <button
+        class="btn btn-primary alt third w-80-px"
+        routerLink="/login"
+      >
+        Login
+      </button>
+      <button
+        class="btn btn-outline alt third w-80-px ms-2"
+        routerLink="/register"
+      >
+        Signup
+      </button>
+    </div>
+  </nav>
+
+  <div (click)="closeMenu()">
+    <div
+    class="d-flex flex-column text-sm-center py-5 custom-height align-items-center"
+  >
+    <span class="pb-5 pb-sm-2 pb-lg-3 text-white text-s"> SoftwareDevelopment.chat </span>
+    <div class="d-flex flex-column text-start sub-text-container">
+      <span class="text-white c-fonts">
+        Software Development Collaboration
+      </span>
+      <span class="text-white c-fonts">
+        Encrypted Chat and Video for Software Developers and Clients
+      </span>
+    </div>
+  </div>
+    <div class="bg-white">
+      <img src="/assets/images/landingpage/chat-landing.jpg" class="vw-100" alt="" />
+    </div>
+    <div class="p-sm-5">
+      <ul class="c-footer ps-4 ps-sm-8">
+        <li class="footer-head-txt">Features:</li>
+        <li class="footer-txt">- Chat has AES 256-bit encryption</li>
+        <li class="footer-txt">- Multiple Simultaneous Chat Sessions</li>
+        <li class="footer-txt">- Call an individual or group</li>
+        <li class="footer-txt">- Sound Notifications, On/Off</li>
+        <li class="footer-txt">- Video call with hundreds of participants, client server options are a consideration</li>
+        <li class="footer-txt">- Video Conferencing Lobby Mode lets you password protect your meeting and only allow people to enter after approval</li>
+        <li class="footer-txt">- You own your data and keep your data secure on your server you operate</li>
+        <li class="footer-head-txt pt-5">Pricing:</li>
+        <li class="footer-txt">- Pricing as low as $5000.00 one-time licensing fee and up depending on options</li>
+        <li class="footer-txt">- Licensing Fee does not include set up or client server/hosting costs</li>
+        <div>
+          <li class="footer-head-txt pt-5">Contact us for a free demo:</li>
+            <p class="text-danger">
+             - We will reach you back!, email <a href="mailto:demo@softwaredevelopment.chat">{{'demo@SoftwareDevelopment.chat'}}</a>
+            </p>
+        </div>
+        <!-- <li class="footer-txt">registration form</li> -->
+      </ul>
+    </div>
+    
+  </div>
+</div>
+<ng-container *ngIf="mobileMenuToggle">
+  <div class="main-area p-5 profile-content">
+    <div class="head-area">
+      <div class="d-flex gap-3">
+        <div class="text-area">
+          <h6 class="m-0 mb-1"></h6>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-row-reverse c-button-landing">
+      <button class="c-btn" (click)="closeMenu()">
+        <fa-icon [icon]="['fas', 'xmark']" />
+      </button>
+    </div>
+    <ul class="ps-0">
+      <li>
+        <a class="mdtxt text-black" routerLink="/login" (click)="closeMenu()"> Login </a>
+      </li>
+      <li>
+        <a class="mdtxt text-black" routerLink="/register" (click)="closeMenu()"> Sign up </a>
+      </li>
+    </ul>
+  </div>
+</ng-container>

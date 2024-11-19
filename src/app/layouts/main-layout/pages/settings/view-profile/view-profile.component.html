@@ -1,0 +1,46 @@
+<div class="profile-picture-area justify-content-center mb-15">
+  <div class="single-box p-5">
+    <div class="col-md-12">
+      <div class="upload-single cover-img">
+        <div class="profile-picture position-relative text-start">
+          <img
+            loading="eager"
+            data-src="{{
+              customer?.CoverPicName || '/assets/images/meta-image.jpg'
+            }}"
+            class="preview-image w-100"
+            onerror="this.onerror=null;this.src='/assets/images/meta-image.jpg';"
+            alt="Preview Image"
+          />
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 profile text-start d-flex align-items-center">
+          <img
+            class="preview-image w-120-px h-120-px"
+            loading="eager"
+            data-src="{{
+              customer?.ProfilePicName ||
+                '/assets/images/avtar/placeholder-user.png'
+            }}"
+            onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
+            alt="Preview Image"
+          />
+          <div class="user-details ms-3">
+            <h3 class="d-flex">
+              {{ customer?.Username }}
+            </h3>
+            <div class="col-md" *ngIf="+profileId === customer.Id">
+              <button
+                class="btn btn-sm btn-primary float-end d-flex"
+                (click)="openEditProfile()"
+              >
+                Privacy and settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
