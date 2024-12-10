@@ -159,7 +159,7 @@ export class ProfileChatsListComponent
     this.profileId = +localStorage.getItem('profileId');
     this.callRoomId = +localStorage.getItem('callRoomId');
     const data = {
-      title: 'Chat.buzz',
+      title: 'SoftwareDevelopment.chat',
       url: `${location.href}`,
       description: '',
     };
@@ -954,7 +954,7 @@ export class ProfileChatsListComponent
           this.groupData?.groupName ||
           this.sharedService?.userData?.Username + ' incoming call...',
         notificationToProfileId: this.userChat.profileId,
-        domain: 'chat.buzz',
+        domain: 'softwaredevelopment.chat',
         uuId: uuId,
       };
       this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
