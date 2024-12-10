@@ -81,8 +81,10 @@ export class InvitePeopleForChatModalComponent {
 
   removeUser() {
     this.selectedUsers = {};
-    // this.addedInvitesList = this.addedInvitesList.filter(
-    //   (user) => user.Id !== item.Id
-    // );
+  }
+
+  closeModal(): void {
+    this.activeModal.close('cancel');
+    this.sharedService.openModalSubject.next(null);
   }
 }

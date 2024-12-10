@@ -103,7 +103,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.spinner.show();
-    // const token = localStorage.getItem('captcha-token');
+    const token = localStorage.getItem('captcha-token');
     // if (!token) {
     //   this.spinner.hide();
     //   this.msg = 'Invalid captcha kindly try again!';
@@ -182,5 +182,18 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.type = 'success';
       }
     });
+  }
+
+  onClick(event: MouseEvent): void {
+    event.preventDefault();
+    let listener = (e: ClipboardEvent) => {
+      let clipboard = e.clipboardData || window["clipboardData"];
+      clipboard.setData("text", 'support@SoftwareDevelopment.chat');
+      e.preventDefault();
+      this.toastService.success('Email address copied');
+    };
+    document.addEventListener("copy", listener, false)
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener, false);
   }
 }

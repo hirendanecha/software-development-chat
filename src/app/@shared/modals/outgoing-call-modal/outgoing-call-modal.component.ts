@@ -61,7 +61,6 @@ export class OutGoingCallModalComponent
     if (window.document.hidden) {
       this.soundEnabledSubscription =
         this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
-          // console.log(soundEnabled);
           if (soundEnabled === false) {
             this.sound?.stop();
           }
@@ -69,8 +68,7 @@ export class OutGoingCallModalComponent
     }
     if (!this.hangUpTimeout) {
       this.hangUpTimeout = setTimeout(() => {
-        this.hangUpCall('You have missed call');
-        // this.hangUpCall();
+        this.hangUpCall('Missed call');
         // this.activateModal.close('missCalled');
       }, 60000);
     }
@@ -79,6 +77,9 @@ export class OutGoingCallModalComponent
       if (data?.actionType === 'DC') {
         this.sound?.stop();
         this.activateModal.close('cancel');
+      } else if (data?.actionType === 'SC') {
+        this.sound?.stop();
+        this.activateModal.close('success');
       }
     });
     if (this.focusElement) {
@@ -91,6 +92,7 @@ export class OutGoingCallModalComponent
     this.socketService.socket?.on('notification', (data: any) => {
       if (data?.actionType === 'SC') {
         this.sound?.stop();
+        this.activateModal.close('success');
       }
     });
   }
@@ -116,7 +118,7 @@ export class OutGoingCallModalComponent
       roomId: this.calldata?.roomId,
       groupId: this.calldata?.groupId,
       notificationByProfileId: this.calldata?.notificationByProfileId,
-      message: msg || 'Call declined',
+      message: msg || 'Missed call',
     };
     this.socketService?.hangUpCall(data, (data: any) => {
       return;

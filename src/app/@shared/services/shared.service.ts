@@ -23,8 +23,11 @@ export class SharedService {
   callId: string;
 
   //trigger invite to chat modal
-  private openModalSubject = new Subject<void>();
+  public openModalSubject = new Subject<void>();
   openModal$ = this.openModalSubject.asObservable();
+
+  private isNotifySubject = new BehaviorSubject<boolean>(false);
+  isNotify$ = this.isNotifySubject.asObservable();
 
   constructor(
     public modalService: NgbModal,
@@ -107,7 +110,10 @@ export class SharedService {
     this.customerService.getNotificationList(Number(id), data).subscribe({
       next: (res: any) => {
         this.isNotify = false;
-        this.notificationList = res?.data;
+        this.notificationList = res.data.filter((ele) => {
+          ele.notificationToProfileId === id;
+          return ele;
+        });
       },
       error: (error) => {
         console.log(error);
@@ -129,7 +135,8 @@ export class SharedService {
   }
 
   generateSessionKey(): void {
-    const sessionKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const sessionKey =
+      Math.random().toString(36).substring(2) + Date.now().toString(36);
     sessionStorage.setItem('uniqueSessionKey', sessionKey);
   }
 
@@ -144,5 +151,13 @@ export class SharedService {
 
   triggerOpenModal() {
     this.openModalSubject.next();
+  }
+
+  setNotify(value: boolean): void {
+    this.isNotifySubject.next(value);
+  }
+
+  getNotify(): boolean {
+    return this.isNotifySubject.getValue();
   }
 }

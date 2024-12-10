@@ -12,10 +12,9 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Howl } from 'howler';
 import { SocketService } from '../../services/socket.service';
 import { EncryptDecryptService } from '../../services/encrypt-decrypt.service';
-
+import { SoundControlService } from '../../services/sound-control.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SoundControlService } from '../../services/sound-control.service';
 import { CustomerService } from '../../services/customer.service';
 import { SharedService } from '../../services/shared.service';
 
@@ -29,25 +28,24 @@ export class IncomingcallModalComponent
 {
   @Input() cancelButtonLabel: string = 'Hangup';
   @Input() confirmButtonLabel: string = 'Join';
+  @Input() showCloseButton: boolean = false;
   @Input() title: string = 'Incoming call...';
   @Input() calldata: any;
   @Input() sound: any;
   @ViewChild('focusElement') focusElement!: ElementRef;
-
   hangUpTimeout: any;
   currentURL: any = [];
   profileId: number;
   soundEnabledSubscription: Subscription;
   isOnCall = false;
   soundTrigger: string;
-
   constructor(
     public activateModal: NgbActiveModal,
     private socketService: SocketService,
     public encryptDecryptService: EncryptDecryptService,
     private soundControlService: SoundControlService,
-    private router: Router,
     private customerService: CustomerService,
+    private router: Router,
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private sharedService: SharedService
@@ -55,26 +53,15 @@ export class IncomingcallModalComponent
     this.profileId = +localStorage.getItem('profileId');
     // this.isOnCall = this.router.url.includes('/facetime/') || false;
   }
-
   ngAfterViewInit(): void {
     this.isOnCall = this.calldata?.isOnCall === 'Y' || false;
     this.soundControlService.initStorageListener();
-    // this.sound?.close();
     this.soundEnabledSubscription =
       this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
         if (soundEnabled === false) {
-          // console.log(soundEnabled);
           this.sound?.stop();
         }
       });
-    // const SoundOct = JSON.parse(
-    //   localStorage.getItem('soundPreferences')
-    // )?.callSoundEnabled;
-    // if (SoundOct !== 'N') {
-    //   if (this.sound) {
-    //     this.sound?.play();
-    //   }
-    // }
     this.sharedService.loginUserInfo.subscribe((user) => {
       this.soundTrigger = user.callNotificationSound;
     });
@@ -114,19 +101,17 @@ export class IncomingcallModalComponent
     clearTimeout(this.hangUpTimeout);
     if (!this.currentURL.includes(this.calldata?.link)) {
       this.currentURL.push(this.calldata.link);
-      // window.open(this.calldata.link, '_blank');
-
-      // console.log('incomin', this.calldata.link);
-      // this.router.navigate([`/appointment-call/${this.calldata.link}`]);
       let chatDataPass = {
         roomId: this.calldata.roomId || null,
         groupId: this.calldata.groupId || null,
       };
-      if (this.calldata?.roomId) {
-        localStorage.setItem('callRoomId', this.calldata?.roomId);
+      if (this.calldata?.roomId || this.calldata.groupId) {
+        localStorage.setItem(
+          'callRoomId',
+          this.calldata?.roomId || this.calldata.groupId
+        );
       }
       if (this.isOnCall) {
-        // const url = window.location.href;
         const parts = window.location.href.split('/');
         const callId = parts[parts.length - 1];
         this.calldata.link = callId;
@@ -142,7 +127,6 @@ export class IncomingcallModalComponent
           state: { chatDataPass },
         });
       }
-      // this.router.navigate([`/freedom-call/${callId}`]);
       this.sound?.stop();
     }
     this.activateModal.close('success');
@@ -162,20 +146,21 @@ export class IncomingcallModalComponent
       notificationByProfileId: this.profileId,
       notificationDesc: 'decline call...',
       notificationToProfileId: this.calldata.notificationToProfileId,
-      domain: 'softwaredevelopment.chat',
+      domain: 'Chat.buzz',
     };
     this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
-      // next: (data: any) => {},
+      next: (data: any) => {},
       error: (err) => {
         console.log(err);
       },
     });
+
     this.socketService?.pickUpCall(data, (data: any) => {
       return;
     });
   }
 
-  hangUpCall(isCallCut, messageText): void {
+  hangUpCall(isCallCut: boolean, messageText: string): void {
     this.sound?.stop();
     clearTimeout(this.hangUpTimeout);
     const data = {
@@ -185,22 +170,17 @@ export class IncomingcallModalComponent
       groupId: this.calldata?.groupId,
       notificationByProfileId:
         this.calldata.notificationToProfileId || this.profileId,
-      message: isCallCut ? 'Call declined' : 'Not answered.',
+      message: isCallCut ? 'Missed call' : 'No Answer',
     };
     this.socketService?.hangUpCall(data, (data: any) => {
       if (isCallCut && messageText) {
-        // const message = `Call declined`;
         this.sendMessage(messageText);
-      } else {
-        // const message = `You have a missed call.`;
-        // this.sendMessage(message);
       }
       this.activateModal.close('cancel');
     });
   }
 
   sendMessage(message: string) {
-    // const message = this.encryptDecryptService?.encryptUsingAES256(`I'll call you back.`);
     const data = {
       messageText: this.encryptDecryptService?.encryptUsingAES256(message),
       roomId: this.calldata?.roomId || null,

@@ -61,20 +61,22 @@ export class CustomerService {
       `${this.baseUrl}/countries`
     );
   }
-
+  
   getStateData(country: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/states?countryCode=${country}`);
   }
-
+  
   createProfile(data: Object): Observable<Object> {
     return this.http.post(`${this.baseUrl}/profile`, data);
   }
 
   getProfile(id): Observable<Object> {
-    return this.http.get<Object>(`${this.baseUrl}/profile/${id}?q=${Date.now()}`);
+    return this.http.get<Object>(
+      `${this.baseUrl}/profile/${id}?q=${Date.now()}`
+    );
   }
 
-  updateProfile(id, customer: Customer): Observable<Object> {
+  updateProfile(id, customer): Observable<Object> {
     const token = localStorage.getItem('auth-token');
     return this.http.put(`${this.baseUrl}/profile/${id}`, customer, {
       headers: {
@@ -110,6 +112,18 @@ export class CustomerService {
     return this.http.get(
       // `${this.baseUrl}/edit-notification/${id}?isRead=${isRead}`
       `${this.baseUrl}/edit-notification/${id}?isRead=${isRead}&q=${Date.now()}`
+    );
+  }
+
+  readAllNotification(id: number): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/read-all-notification/${id}?q=${Date.now()}`
+    );
+  }
+
+  deleteAllNotification(id: number): Observable<any> {
+    return this.http.delete(
+      `${this.baseUrl}/delete-all-notification/${id}?q=${Date.now()}`
     );
   }
 

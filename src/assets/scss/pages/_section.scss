@@ -232,6 +232,8 @@
       &::before {
         position: absolute;
         content: "";
+        left: 0;
+        right: 0;
         width: 100%;
         height: 100%;
         background: linear-gradient(0deg, rgba(0, 0, 0, 0) 30.93%, #000 100%);
@@ -738,6 +740,9 @@
       }
     }
   }
+}
+.modal-header {
+  justify-content: space-between;
 }
 .cart-content {
   thead {

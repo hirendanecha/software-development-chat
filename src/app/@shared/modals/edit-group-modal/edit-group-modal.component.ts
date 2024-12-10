@@ -155,14 +155,11 @@ export class EditGroupModalComponent implements OnInit {
         groupId: this.groupId,
         isUpdate: isUpdate,
       };
-      // console.log(groupData);
-      // console.log(this.addedInvitesList);
       this.activateModal.close(groupData);
     } else {
       this.activateModal.close(this.data);
     }
   }
-
   removeGroupUser(id) {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       centered: true,
@@ -185,8 +182,7 @@ export class EditGroupModalComponent implements OnInit {
           groupId: this.groupId,
         };
         this.socketService.removeGroupMember(data, (res) => {
-          this.data = { ...res };
-          // console.log(this.data);
+          this.data = {...res};
         });
         if (id === this.profileId) {
           this.activateModal.close('cancel');

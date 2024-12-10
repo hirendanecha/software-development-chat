@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   NgZone,
@@ -13,7 +15,7 @@ import { SocketService } from 'src/app/@shared/services/socket.service';
 import { ConfirmationModalComponent } from 'src/app/@shared/modals/confirmation-modal/confirmation-modal.component';
 import { BreakpointService } from 'src/app/@shared/services/breakpoint.service';
 import { take } from 'rxjs';
-import * as moment from 'moment';
+import moment from 'moment';
 import { AppQrModalComponent } from 'src/app/@shared/modals/app-qr-modal/app-qr-modal.component';
 import { ConferenceLinkComponent } from 'src/app/@shared/modals/create-conference-link/conference-link-modal.component';
 import { Router } from '@angular/router';
@@ -25,6 +27,7 @@ import { ToastService } from 'src/app/@shared/services/toast.service';
   selector: 'app-profile-chat-list',
   templateUrl: './profile-chats.component.html',
   styleUrls: ['./profile-chats.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileChartsComponent implements OnInit, OnDestroy {
   activeIdTab: string = 'local';
@@ -47,8 +50,8 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
   };
   oldChat: any = {};
 
-  isMessageSoundEnabled: boolean;
-  isCallSoundEnabled: boolean;
+  isMessageSoundEnabled: boolean = true;
+  isCallSoundEnabled: boolean = true;
   isInnerWidthSmall: boolean;
   isSidebarOpen: boolean = false;
 
@@ -60,16 +63,24 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     private modalService: NgbModal,
     public breakpointService: BreakpointService,
-    private ngZone:NgZone,
+    private ngZone: NgZone,
     private router: Router,
     private customerService: CustomerService,
     private tokenStorageService: TokenStorageService,
-    private toasterService: ToastService
+    private toasterService: ToastService,
+    private cdr : ChangeDetectorRef
   ) {
     this.profileId = +localStorage.getItem('profileId');
-    if (this.sharedService.isNotify) {
-      this.sharedService.isNotify = false;
-    }
+    // if (this.sharedService.isNotify) {
+    //   this.sharedService.isNotify = false;
+    // }
+    // const data = this.tokenStorageService.getUser();
+    // this.sharedService.getLoginUserDetails(data);
+
+    this.sharedService.isNotify$.subscribe(
+      (value) => (this.sharedService.isNotify = value)
+    );
+    this.cdr.markForCheck();
   }
   ngOnInit(): void {
     this.socketService.connect();
@@ -97,7 +108,7 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
         user?.messageNotificationSound === 'Y' ? true : false;
     });
   }
-
+  
   onResize() {
     this.ngZone.run(() => {
       this.isInnerWidthSmall = window.innerWidth < 576;
@@ -114,10 +125,6 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
   }
 
   toggleSoundPreference(property: string, ngModelValue: boolean): void {
-    // const soundPreferences =
-    //   JSON.parse(localStorage.getItem('soundPreferences')) || {};
-    // soundPreferences[property] = ngModelValue ? 'Y' : 'N';
-    // localStorage.setItem('soundPreferences', JSON.stringify(soundPreferences));
     const soundObj = {
       property: property,
       value: ngModelValue ? 'Y' : 'N',
@@ -152,11 +159,10 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
         groupId: this.userChat.groupId,
         date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
       };
-      this.socketService.switchChat(this.oldChat, (data) => {
-        // console.log(data);
-      });
+      this.socketService.switchChat(this.oldChat, (data) => {});
     }
     this.userChat = userName;
+    this.cdr.markForCheck();
   }
 
   onNewChatRoom(isRoomCreated) {
@@ -177,15 +183,21 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
     offcanvasRef.componentInstance.onNewChat.subscribe((emittedData: any) => {
       this.onChatPost(emittedData);
     });
-    offcanvasRef.result.then((result) => {}).catch((reason) => {
-      this.isSidebarOpen = false;
-  });
+    offcanvasRef.result
+      .then((result) => {})
+      .catch((reason) => {
+        this.isSidebarOpen = false;
+      });
+    this.cdr.markForCheck();
   }
 
   mobileShortCutPopup() {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       centered: true,
     });
+    setTimeout(() => {
+      modalRef.close();
+    }, 30000);
     modalRef.componentInstance.title = 'Mobile screen detected';
     modalRef.componentInstance.confirmButtonLabel = 'Yes';
     modalRef.componentInstance.cancelButtonLabel = 'No';
@@ -197,16 +209,16 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
         const modalRef = this.modalService.open(ConfirmationModalComponent, {
           centered: true,
         });
-        modalRef.componentInstance.title = 'Add SoftwareDevelopment chats on home';
+        modalRef.componentInstance.title = 'Add SoftwareDevelopment.chat on home';
         modalRef.componentInstance.confirmButtonLabel = 'Do not display again';
         modalRef.componentInstance.cancelButtonLabel = 'Close';
         modalRef.componentInstance.message =
-        'On your browser click on browser menu, then click Add to Home Screen';
-        // modalRef.result.then((res) => {
-        //   if (res === 'success') {
-        //     localStorage.setItem('isMobilePopShow', 'N');
-        //   }
-        // });
+          'On your browser click on browser menu, then click Add to Home Screen';
+        modalRef.result.then((res) => {
+          if (res === 'success') {
+            // localStorage.setItem('isMobilePopShow', 'N');
+          }
+        });
       }
     });
   }
@@ -217,6 +229,7 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.isRoomCreated = false;
+    window.removeEventListener('resize', this.onResize.bind(this));
     // if (this.socketService?.socket) {
     //   this.socketService.socket?.disconnect();
     // }

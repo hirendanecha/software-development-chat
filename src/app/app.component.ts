@@ -30,7 +30,7 @@ import { TokenStorageService } from './@shared/services/token-storage.service';
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output('newRoomCreated') newRoomCreated: EventEmitter<any> =
     new EventEmitter<any>();
-  title = 'softwaredevelopment-chat';
+  title = 'SoftwareDevelopment.chat';
   showButton = false;
   tab: any;
 
@@ -38,7 +38,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   notificationId: number;
   originalFavicon: HTMLLinkElement;
   currentURL = [];
-  isOnCall = false;
   tagNotificationSound: boolean;
   messageNotificationSound: boolean;
   soundEnabled: boolean;
@@ -56,7 +55,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.checkDocumentFocus();
     this.profileId = +localStorage.getItem('profileId');
-    this.isOnCall = this.router.url.includes('/facetime/') || false;
   }
 
   ngOnInit(): void {
@@ -70,9 +68,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: (err) => {
           // this.toasterService.warring(
-          //   'your session is expire please login again!'
-          // );
-          this.tokenService.signOut();
+            //   'your session is expire please login again!'
+            // );
+            this.tokenService.signOut();
         },
       });
     }
@@ -95,7 +93,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.socketService.socket?.connect();
         this.socketService.socket?.emit('online-users');
       }
-
       this.socketService.socket?.on('notification', (data: any) => {
         if (data) {
           if (data.actionType === 'S') {
@@ -105,17 +102,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           if (
             data.actionType === 'EC' &&
             data.notificationByProfileId !== this.profileId &&
-            sessionStorage.getItem('callId')
+            localStorage.getItem('callId')
           ) {
             this.sharedService.callId = null;
-            sessionStorage.removeItem('callId');
+            localStorage.removeItem('callId');
             const endCall = {
               profileId: this.profileId,
               roomId: data.roomId,
             };
             this.socketService?.endCall(endCall);
+            this.router.navigate(['/profile-chats']);
           }
-
           // const userData = this.tokenService.getUser();
           // this.sharedService.getLoginUserDetails(userData);
           this.sharedService.loginUserInfo.subscribe((user) => {
@@ -125,7 +122,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               user.messageNotificationSound === 'Y' || false;
           });
           if (data?.notificationByProfileId !== this.profileId) {
-            this.sharedService.isNotify = true;
+            this.sharedService.setNotify(true);
+            // this.sharedService.isNotify = true;
             this.originalFavicon.href = '/assets/images/icon-unread.jpg';
           }
           this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
@@ -192,6 +190,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             data?.actionType === 'SC' &&
             data?.notificationByProfileId !== this.profileId
           ) {
+            this.sharedService.setNotify(false);
             if (!this.currentURL.includes(data?.link)) {
               this.currentURL.push(data.link);
               this.modalService.dismissAll();
@@ -208,7 +207,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.router.navigate([`/facetime/${callId}`], {
                   state: { chatDataPass },
                 });
-                // this.router.navigate([`/freedom-call/${data.link}`]);
               }
               // window.open(`appointment-call/${data.link}`, '_blank');
               // window?.open(data?.link, '_blank');
@@ -230,7 +228,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       const isRead = localStorage.getItem('isRead');
       if (isRead === 'N') {
-        this.sharedService.isNotify = true;
+        // this.sharedService.isNotify = true;
+        this.sharedService.setNotify(true);
+        this.originalFavicon.href = '/assets/images/icon-unread.jpg';
       }
     }
   }
@@ -285,7 +285,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   logout(): void {
     this.socketService?.socket?.emit('offline', (data) => {
-      // console.log('user=>', data)
+      return;
     });
     this.socketService?.socket?.on('get-users', (data) => {
       data.map((ele) => {
@@ -296,10 +296,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.customerService.logout().subscribe({
       next: (res) => {
+        // this.tokenService.clearLoginSession(this.profileId);
         this.tokenService.signOut();
-        // console.log(res)
+        return;
       },
-      error(err) {
+      error: (err) => {
         if (err.status === 401) {
           this.tokenService.signOut();
         }

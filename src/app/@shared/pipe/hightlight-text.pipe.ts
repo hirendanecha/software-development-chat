@@ -15,29 +15,22 @@
 
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { EncryptDecryptService } from '../services/encrypt-decrypt.service';
 
 @Pipe({
   name: 'highlight',
 })
-
 export class HighlightPipe implements PipeTransform {
-  constructor(private encryptDecryptService: EncryptDecryptService) {}
-  
   transform(text: string, search: string): string {
-    const decryptedText = this.encryptDecryptService.decryptUsingAES256(text);
-    
     if (!search) {
       return text;
     }
     
     const parser = new DOMParser();
-    const doc = parser.parseFromString(decryptedText, 'text/html');
+    const doc = parser.parseFromString(text, 'text/html');
 
     this.highlightTextNodes(doc.body, search);
 
-    const highlightedAndEncryptedText = this.encryptDecryptService.encryptUsingAES256(doc.body.innerHTML);
-    return highlightedAndEncryptedText;
+    return doc.body.innerHTML;
   }
 
   private highlightTextNodes(element: Node, search: string) {

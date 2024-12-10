@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -15,6 +16,7 @@ import { CustomerService } from '../../services/customer.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { MessageService } from '../../services/message.service';
+import { EmojiPaths } from '../../constant/emoji';
 
 @Component({
   selector: 'app-tag-user-input',
@@ -37,7 +39,6 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
   @ViewChild('tagInputDiv', { static: false }) tagInputDiv: ElementRef;
   @ViewChild('userSearchDropdownRef', { static: false, read: NgbDropdown })
   userSearchNgbDropdown: NgbDropdown;
-
   metaDataSubject: Subject<void> = new Subject<void>();
 
   userList = [];
@@ -47,28 +48,16 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
 
   copyImage: any;
   profileId: number;
-  emojiPaths = [
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Heart.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Cool.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Anger.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Censorship.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Hug.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Kiss.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/LOL.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Party.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Poop.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Sad.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Thumbs-UP.gif',
-    'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Thumbs-down.gif',
-  ];
+  emojiPaths = EmojiPaths;
 
   constructor(
     private renderer: Renderer2,
     private customerService: CustomerService,
     private spinner: NgxSpinnerService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {
-    this.metaDataSubject.pipe(debounceTime(5)).subscribe(() => {
+    this.metaDataSubject.pipe(debounceTime(200)).subscribe(() => {
       this.getMetaDataFromUrlStr();
       this.checkUserTagFlag();
     });
@@ -95,6 +84,9 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
   }
 
   messageOnKeyEvent(): void {
+    if (this.isCustomeSearch) {
+      this.cdr.detectChanges();
+    };
     this.metaDataSubject.next();
     this.emitChangeEvent();
   }
@@ -138,7 +130,8 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
         if (
           foundValidTag &&
           this.userNameSearch &&
-          this.userNameSearch.length > 1 && !this.isCustomeSearch
+          this.userNameSearch.length >= 0 &&
+          !this.isCustomeSearch
         ) {
           this.getUserList(this.userNameSearch);
         } else if (this.isCustomeSearch) {
@@ -146,6 +139,8 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
         } else {
           this.clearUserSearchData();
         }
+      } else {
+        return;
       }
     }
   }
@@ -188,6 +183,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
           .subscribe({
             next: (res: any) => {
               this.isMetaLoader = false;
+              this.spinner.hide();
               if (res?.meta?.image) {
                 const urls = res.meta?.image?.url;
                 const imgUrl = Array.isArray(urls) ? urls?.[0] : urls;
@@ -269,10 +265,14 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
           const match = regex.exec(node.nodeValue || '');
           if (match && match.index <= cursorPosition) {
             const atSymbolIndex = match.index;
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const cursorOffset = range.startOffset;
             const replacement = `<a href="/settings/view-profile/${userId}" class="text-danger" data-id="${userId}">@${displayName}</a>`;
             const beforeText = node.nodeValue?.substring(0, atSymbolIndex);
-            const afterText = node.nodeValue?.substring(cursorPosition);
+            const afterText = node.nodeValue?.substring(cursorOffset);
             const replacedText = `${beforeText}${replacement}${afterText}`;
+            this.clearUserSearchData();
             const span = document.createElement('span');
             span.innerHTML = replacedText;
             while (span.firstChild) {
@@ -321,7 +321,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
 
   selectEmoji(emoji: any): void {
     let htmlText = this.tagInputDiv?.nativeElement?.innerHTML || '';
-    htmlText = htmlText.replace(/^(<br\s*\/?>)+/i, '');
+    htmlText = htmlText.replace(/(<br\s*\/?>)$/i, '');
     const text = `${htmlText}<img src=${emoji} width="50" height="50">`;
     this.setTagInputDivValue(text);
     this.emitChangeEvent();
@@ -329,6 +329,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
 
   getUserList(search: string): void {
     if (this.isCustomeSearch) {
+      this.cdr.detach();
       this.messageService
         .getRoomProfileList(search, this.isCustomeSearch)
         .subscribe({
@@ -364,6 +365,9 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
   clearUserSearchData(): void {
     this.userNameSearch = '';
     this.userList = [];
+    if (this.isCustomeSearch) {
+      this.cdr.reattach();
+    }
   }
 
   clearMetaData(): void {
@@ -485,8 +489,6 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     const imgTag = contentContainer.querySelector('img');
 
     if (imgTag) {
-      // const tagUserInput = document.querySelector('.tag-input-div') as HTMLInputElement;
-      // if (tagUserInput) {tagUserInput.focus()}
       const imgTitle = imgTag.getAttribute('title');
       const imgStyle = imgTag.getAttribute('style');
       const imageGif = imgTag

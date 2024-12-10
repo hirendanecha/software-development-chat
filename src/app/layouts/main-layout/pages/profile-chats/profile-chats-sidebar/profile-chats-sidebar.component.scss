@@ -9,8 +9,10 @@
   //   .border-top {
   //     border-top: 1px solid var(--bs-border-color) !important;
   //   }
+  .image-render {
+    image-rendering: -webkit-optimize-contrast;
+  }
   .sidebar-head-text {
-    // max-width: 178px;
     max-width: 143px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -41,6 +43,11 @@
       width: 200px;
     }
   }
+  .info-area h6 {
+    max-width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   .messages-area {
     .last-message {
@@ -60,6 +67,17 @@
   }
   .avatar-img {
     max-width: 40px;
+  }
+  .default_40 {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--box-1st-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--font-icon-color);
+    font-size: 16px;
   }
   .cus-scrollbar {
     height: 55vh;
@@ -106,7 +124,7 @@
     }
     .abs-dnd {
       background: red;
-    } 
+    }
     .abs-invisible{
       background: rgb(156, 155, 155);
     }
@@ -198,6 +216,8 @@
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
+      font-size: 16px !important;
+      line-height: 25px !important;
     }
     a {
       color: var(--para-2nd-color)!important;

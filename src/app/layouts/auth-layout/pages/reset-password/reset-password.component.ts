@@ -35,6 +35,7 @@ export class ResetPasswordComponent {
 
     this.spinner.hide();
   }
+  
   togglePasswordVisibility(passwordInput: HTMLInputElement) {
     passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
     this.passwordHidden = !this.passwordHidden;
@@ -60,7 +61,6 @@ export class ResetPasswordComponent {
 
   validatepassword(): boolean {
     const pattern = /^.{5,}$/;
-
     // const pattern =
     //   '(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[a-z])(?=.*[0-9].*[0-9]).{8}';
 

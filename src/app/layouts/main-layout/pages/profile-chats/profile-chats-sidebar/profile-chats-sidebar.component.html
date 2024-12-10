@@ -4,56 +4,91 @@
       <div
         class="profile-area d-center justify-content-between align-items-baseline"
       >
-        <div
-          class="avatar-item d-flex mb-2 gap-3 align-items-center cursor"(click)="clearChatList()" 
-         
-        >
-        <div ngbDropdown class="avatar-item position-relative online-status">
-          <!--  -->
-          <ng-container>
-            <button
-              ngbDropdownToggle
-              class="abs-activity position-absolute d-center smtxt"
-              [ngClass]="{
-                'abs-active ': sharedService.userData.userStatus === 'active',
-                'abs-away': sharedService.userData.userStatus === 'away',
-                'abs-dnd': sharedService.userData.userStatus === 'dnd',
-                'abs-invisible': sharedService.userData.userStatus === 'invisible' }"
-            ></button>
-            <div ngbDropdownMenu class="dropdown-menu">
-              <div class="dropdown-preferences">
-                <div class="d-flex flex-column">
-                  <div class="c-pointer d-flex  justify-content-between">
-                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('active')">
-                      Active
-
-                    </h6>
-                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'active'" />
-
-                  </div>
-                  <div class="c-pointer d-flex  justify-content-between">
-                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('away')">
-                      Away
-                    </h6>
-                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'away'" />
-                  </div>
-                  <div class="c-pointer d-flex  justify-content-between">
-                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('dnd')">
-                      Do not disturb
-                    </h6>
-                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'dnd'" />
-                  </div>
-                  <div class="c-pointer d-flex justify-content-between">
-                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('invisible')">
-                      Invisible
-                    </h6>
-                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'invisible'" />
+        <div class="avatar-item d-flex mb-2 gap-3 align-items-center cursor">
+          <div ngbDropdown class="avatar-item position-relative online-status">
+            <ng-container>
+              <button
+                ngbDropdownToggle
+                class="abs-activity position-absolute d-center smtxt"
+                [ngClass]="{
+                  'abs-active ': sharedService.userData.userStatus === 'active',
+                  'abs-away': sharedService.userData.userStatus === 'away',
+                  'abs-dnd': sharedService.userData.userStatus === 'dnd',
+                  'abs-invisible':
+                    sharedService.userData.userStatus === 'invisible'
+                }"
+              ></button>
+              <div ngbDropdownMenu class="dropdown-menu">
+                <div class="dropdown-preferences">
+                  <div class="d-flex flex-column">
+                    <div class="c-pointer d-flex justify-content-between">
+                      <h6
+                        ngbDropdownItem
+                        class="d-flex w-100"
+                        (click)="profileStatus('active')"
+                      >
+                        Active
+                      </h6>
+                      <fa-icon
+                        [icon]="['fas', 'check']"
+                        class="font-20-px"
+                        *ngIf="sharedService.userData.userStatus === 'active'"
+                      />
+                    </div>
+                    <div
+                      class="c-pointer d-flex align-items-baseline justify-content-between"
+                    >
+                      <h6
+                        ngbDropdownItem
+                        class="d-flex w-100"
+                        (click)="profileStatus('away')"
+                      >
+                        Away
+                      </h6>
+                      <fa-icon
+                        [icon]="['fas', 'check']"
+                        class="font-20-px"
+                        *ngIf="sharedService.userData.userStatus === 'away'"
+                      />
+                    </div>
+                    <div
+                      class="c-pointer d-flex align-items-baseline justify-content-between"
+                    >
+                      <h6
+                        ngbDropdownItem
+                        class="d-flex w-100"
+                        (click)="profileStatus('dnd')"
+                      >
+                        Do not disturb
+                      </h6>
+                      <fa-icon
+                        [icon]="['fas', 'check']"
+                        class="font-20-px"
+                        *ngIf="sharedService.userData.userStatus === 'dnd'"
+                      />
+                    </div>
+                    <div
+                      class="c-pointer d-flex align-items-baseline justify-content-between"
+                    >
+                      <h6
+                        ngbDropdownItem
+                        class="d-flex w-100"
+                        (click)="profileStatus('invisible')"
+                      >
+                        Invisible
+                      </h6>
+                      <fa-icon
+                        [icon]="['fas', 'check']"
+                        class="font-20-px"
+                        *ngIf="
+                          sharedService.userData.userStatus === 'invisible'
+                        "
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </ng-container>
-            <!--  -->
+            </ng-container>
             <img
               [src]="sharedService?.userData?.ProfilePicName"
               onerror="this.onerror=null;this.src='/assets/images/default-profile.jpg';"
@@ -61,9 +96,10 @@
               alt="avatar"
             />
           </div>
+          <div class="info-area">
             <h6 class="m-0">{{ sharedService?.userData?.Username }}</h6>
-        </div>
-        <div
+          </div>
+          <div
           class="icon-area d-center position-relative ms-7 c-pointer"
           (click)="openNotificationsMobileModal()"
         >
@@ -73,20 +109,7 @@
           ></span>
           <fa-icon [icon]="['fas', 'bell']" class="font-20-px" />
         </div>
-        <!-- <div
-        class="single-item"
-        *ngIf="sharedService.callId && !hideOngoingCallButton"
-      >
-        <div class="ongoing-call d-center position-relative">
-          <a
-            routerLinkActive="active"
-            [routerLink]="['/facetime/' + sharedService.callId]"
-          >
-            <fa-icon [icon]="['fas', 'phone-volume']" class="font-20-px" />
-          </a>
         </div>
-      </div> -->
-
         <div class="btn-group cus-dropdown d-flex gap-3">
           <div ngbDropdown class="d-inline-block">
             <button class="dropdown-btn" ngbDropdownToggle>
@@ -155,40 +178,43 @@
                     </div>
                   </div>
                   <div
-                  class="c-pointer d-flex align-items-baseline mt-3"
-                  (click)="appQrmodal()"
-                >
-                <fa-icon
-                [icon]="['fas', 'mobile']"
-                class="font-20-px me-2"
-              />
-                  <h6 class="d-flex">Buzz Ring App</h6>
-                </div>
-                <div
-                class="c-pointer d-flex align-items-baseline mt-3"
-                (click)="uniqueLink()"
-              >
-              <fa-icon
-              [icon]="['fas', 'square-plus']"
-              class="font-20-px me-2"
-            />
-                <h6 class="d-flex">Create Unique Link</h6>
-              </div>
-              <div class="c-pointer d-flex align-items-baseline mt-3">
-                <button
-                (click)="goToSetting()"
-                class="mdtxt d-flex"
-              >
-                <fa-icon [icon]="['fas', 'gear']" class="font-20-px me-2"/>
-               <h6 class="d-flex"> Setting & Privacy </h6>
-              </button>
-              </div>
-              <div class="c-pointer d-flex align-items-baseline mt-3">
-                <button class="mdtxt d-flex" (click)="logout()">
-                  <fa-icon [icon]="['fas', 'right-from-bracket']" class="font-20-px me-2" />
-                  <h6 class="d-flex"> Sign Out </h6>
-                </button>
-              </div>
+                    class="c-pointer d-flex align-items-baseline mt-3"
+                    (click)="appQrmodal()"
+                  >
+                    <fa-icon
+                      [icon]="['fas', 'mobile']"
+                      class="font-20-px me-2"
+                    />
+                    <h6 class="d-flex">Buzz Ring App</h6>
+                  </div>
+                  <div
+                    class="c-pointer d-flex align-items-baseline mt-3"
+                    (click)="uniqueLink()"
+                  >
+                    <fa-icon
+                      [icon]="['fas', 'square-plus']"
+                      class="font-20-px me-2"
+                    />
+                    <h6 class="d-flex">Create Unique Link</h6>
+                  </div>
+                  <div class="c-pointer d-flex align-items-baseline mt-3">
+                    <button (click)="goToSetting()" class="mdtxt d-flex">
+                      <fa-icon
+                        [icon]="['fas', 'gear']"
+                        class="font-20-px me-2"
+                      />
+                      <h6 class="d-flex">Setting & Privacy</h6>
+                    </button>
+                  </div>
+                  <div class="c-pointer d-flex align-items-baseline mt-3">
+                    <button class="mdtxt d-flex" (click)="logout()">
+                      <fa-icon
+                        [icon]="['fas', 'right-from-bracket']"
+                        class="font-20-px me-2"
+                      />
+                      <h6 class="d-flex">Sign Out</h6>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -196,20 +222,21 @@
         </div>
       </div>
       <!-- <span class="m-1">Search for end users to message:</span> -->
-      <!-- <div class="input-area py-2 d-flex align-items-center">
-        <fa-icon [icon]="['fas', 'search']" class="font-20-px m-1" />
+      <div class="py-2 d-flex align-items-center justify-content-center">
+        <!-- <fa-icon [icon]="['fas', 'search']" class="font-20-px m-1" />
         <input
           type="text"
           placeholder="Search for end users"
           [(ngModel)]="searchText"
           autocomplete="off"
           (keyup)="getUserList()"
-        />
-      </div> -->
-      <div class="py-2 d-flex align-items-center justify-content-center">
-        <button class="btn btn-success h-40-px d-flex align-items-center gap-1" (click)="invitePeople()">
+        /> -->
+        <button
+          class="btn btn-success btn-sm d-flex align-items-center justify-content-center h-36-px"
+          (click)="invitePeople()"
+        >
           <fa-icon [icon]="['fas', 'plus-circle']" class="font-20-px m-1" />
-          Invite people for chat
+          Invite people to chat
         </button>
       </div>
       <ng-container *ngIf="searchText">
@@ -234,7 +261,7 @@
                     onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
                   />
                   <span class="overflow-hidden text-truncate">{{
-                    user.Username.split(" ").join("")
+                    user.Username?.split(" ")?.join("")
                   }}</span>
                 </div>
               </ng-container>
@@ -271,7 +298,6 @@
           selectedButton === 'chats'
       }"
     >
-      <!-- <div class="header-menu cus-scrollbar overflow-auto position-relative"> -->
       <ng-container>
         <app-inline-loader class="position-absolute" *ngIf="isChatLoader" />
       </ng-container>
@@ -442,128 +468,145 @@
             class="single-item messages-area"
             *ngFor="let item of newChatList"
           >
-            <div
-              class="text-start d-flex justify-content-between chat-single p-5"
-              [ngClass]="{
-                active:
-                  selectedChatUser === item?.roomId ||
-                  selectedChatUser === item?.groupId
-              }"
-              (click)="onChat(item)"
-            >
-              <div class="d-flex gap-2">
-                <div class="avatar position-relative online-status">
-                  <ng-container *ngIf="item?.roomId">
-                    <ng-container [ngSwitch]="findUserStatus(item?.profileId)">
-                      <span
-                        class="abs-area position-absolute d-center smtxt ac"
-                        *ngSwitchCase="'active'"
-                        [ngClass]="'abs-active'"
-                      ></span>
-                      <span
-                        class="abs-area position-absolute d-center smtxt"
-                        *ngSwitchCase="'away'"
-                        [ngClass]="'abs-away'"
-                      ></span>
-                      <span
-                        class="abs-area position-absolute d-center smtxt"
-                        *ngSwitchCase="'dnd'"
-                        [ngClass]="'abs-dnd'"
-                      ></span>
-                    </ng-container>
-                  </ng-container>
-                  <img
-                    class="avatar-img h-40-px w-40-px max-un"
-                    src="{{
-                      item?.roomId ? item?.ProfilePicName : item?.profileImage
-                    }}"
-                    [alt]="item?.groupName || item?.Username"
-                    onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
-                  />
-                </div>
-                <div
-                  class="text-area d-flex justify-content-between sidebar-items align-items-center"
-                  (click)="dismissSidebar()"
-                >
-                  <div class="title-area position-relative d-grid">
-                    <h6 class="m-0 d-inline-flex sidebar-head-text">
-                      {{ item?.groupName || item?.Username }}
-                    </h6>
-                    <span
-                      class="font-16-px last-message"
-                      *ngIf="item?.lastMessageText !== null"
-                      [innerHTML]="
-                        encryptDecryptService.decryptUsingAES256(
-                          item?.lastMessageText
-                        )
-                      "
-                    >
-                    </span>
-                  </div>
-                  <div class="d-flex align-items-center">
-                    <span
-                      class="abs-area d-center mdtxt top-0 start-100 translate-middle badge rounded-pill bg-danger mt-4"
-                      *ngIf="
-                        item?.unReadMessage > 0 &&
-                        (selectedChatUser !== item.roomId ||
-                          selectedChatUser !== item.groupId)
-                      "
-                      >{{ item?.unReadMessage }}</span
-                    >
-                    <span class="font-12-px">
-                      {{ item?.updatedDate | messageTime }}
-                    </span>
-                  </div>
-                </div>
+        <div
+          class="text-start d-flex justify-content-between chat-single p-5"
+          [ngClass]="{
+            active:
+              selectedChatUser === item?.roomId ||
+              selectedChatUser === item?.groupId
+          }"
+          (click)="onChat(item)"
+        >
+          <div class="d-flex gap-2">
+            <div class="avatar position-relative online-status">
+              <ng-container *ngIf="item?.roomId">
+                <ng-container [ngSwitch]="findUserStatus(item?.profileId)">
+                  <span
+                    class="abs-area position-absolute d-center smtxt ac"
+                    *ngSwitchCase="'active'"
+                    [ngClass]="'abs-active'"
+                  ></span>
+                  <span
+                    class="abs-area position-absolute d-center smtxt"
+                    *ngSwitchCase="'away'"
+                    [ngClass]="'abs-away'"
+                  ></span>
+                  <span
+                    class="abs-area position-absolute d-center smtxt"
+                    *ngSwitchCase="'dnd'"
+                    [ngClass]="'abs-dnd'"
+                  ></span>
+                </ng-container>
+              </ng-container>
+              <img
+                *ngIf="item?.roomId && item?.ProfilePicName"
+                class="avatar-img h-40-px w-40-px max-un"
+                src="{{ item?.ProfilePicName }}"
+                [alt]="item?.Username"
+              />
+              <img
+                *ngIf="item?.groupId && item?.profileImage"
+                class="avatar-img h-40-px w-40-px max-un"
+                src="{{ item?.profileImage }}"
+                [alt]="item?.groupName"
+              />
+              <div
+                class="default_40"
+                *ngIf="
+                  !(
+                    (item.groupId && item?.profileImage) ||
+                    (item.roomId && item?.ProfilePicName)
+                  )
+                "
+              >
+                {{
+                  item?.roomId
+                    ? item?.Username?.substring(0, 2).toUpperCase()
+                    : item?.groupName?.substring(0, 2).toUpperCase()
+                }}
               </div>
-              <div class="btn-group d-flex options ms-1">
-                <div
-                  ngbDropdown
-                  #editPopup="ngbDropdown"
-                  class="d-inline-block"
+            </div>
+            <div
+              class="text-area d-flex justify-content-between sidebar-items align-items-center"
+              (click)="dismissSidebar()"
+            >
+              <div class="title-area position-relative d-grid">
+                <h6 class="m-0 d-inline-flex sidebar-head-text">
+                  {{ item?.groupName || item?.Username }}
+                </h6>
+                <span
+                  class="font-16-px last-message"
+                  *ngIf="item?.lastMessageText !== null"
+                  [innerHTML]="
+                    encryptDecryptService.decryptUsingAES256(
+                      item?.lastMessageText
+                    )
+                  "
                 >
-                  <button class="dropdown-btn" ngbDropdownToggle>
-                    <fa-icon
-                      [icon]="['fas', 'ellipsis-v']"
-                      class="font-20-px"
-                    />
-                  </button>
-                  <div
-                    ngbDropdownMenu
-                    class="dropdown-menu"
-                    (mouseleave)="editPopup.close()"
-                  >
-                    <button ngbDropdownItem (click)="deleteOrLeaveChat(item)">
-                      <a class="droplist d-flex align-items-center gap-2">
-                        <fa-icon
-                          [icon]="
-                            item?.groupId
-                              ? ['fas', 'right-from-bracket']
-                              : ['fas', 'trash-can']
-                          "
-                        />
-                        <span class="data-text-color">{{
-                          item?.groupId ? "Leave" : "Delete"
-                        }}</span>
-                      </a>
-                    </button>
-                  </div>
-                </div>
+                </span>
+              </div>
+              <div class="d-flex align-items-center">
+                <span
+                  class="abs-area d-center mdtxt top-0 start-100 translate-middle badge rounded-pill bg-danger mt-4"
+                  *ngIf="
+                    item?.unReadMessage > 0 &&
+                    (selectedChatUser !== item.roomId ||
+                      selectedChatUser !== item.groupId)
+                  "
+                  >{{ item?.unReadMessage }}</span
+                >
+                <span class="font-12-px" *ngIf="item?.updatedDate; else whileAgo">
+                  {{ item?.updatedDate | messageTime }}
+                </span>
+                <ng-template #whileAgo>
+                 <span class="font-12-px">while ago</span>
+                </ng-template>
               </div>
             </div>
           </div>
-        </ng-container>
-        <ng-template #noChatList>
-          <h6 class="text-center">No chats</h6>
-        </ng-template>
-      </ng-container>
+          <div class="btn-group d-flex options ms-1">
+            <div ngbDropdown #editPopup="ngbDropdown" class="d-inline-block">
+              <button class="dropdown-btn" ngbDropdownToggle>
+                <fa-icon [icon]="['fas', 'ellipsis-v']" class="font-20-px" />
+              </button>
+              <div
+                ngbDropdownMenu
+                class="dropdown-menu"
+                (mouseleave)="editPopup.close()"
+              >
+                <button ngbDropdownItem (click)="deleteOrLeaveChat(item)">
+                  <a class="droplist d-flex align-items-center gap-2">
+                    <fa-icon
+                      [icon]="
+                        item?.groupId
+                          ? ['fas', 'right-from-bracket']
+                          : ['fas', 'trash-can']
+                      "
+                    />
+                    <span class="data-text-color">{{
+                      item?.groupId ? "Leave" : "Delete"
+                    }}</span>
+                  </a>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noChatList>
+      <h6 class="text-center">No chats</h6>
+    </ng-template>
+  </ng-container>
     </div>
   </aside>
   <aside *ngIf="selectedButton === 'chats'">
     <div class="chat-top p-2 px-5">
       <span class="m-1">Pending Invites:</span>
     </div>
-    <div class="header-menu cus-scrollbar-pending overflow-auto justify-content-between d-flex flex-column">
+    <div
+      class="header-menu cus-scrollbar-pending overflow-auto justify-content-between d-flex flex-column"
+    >
       <ng-container *ngIf="pendingChatList.length; else noPendingRequest">
         <div
           class="single-item messages-area"
@@ -577,7 +620,7 @@
             <div class="d-flex gap-2" (click)="dismissSidebar()">
               <div class="avatar">
                 <img
-                  class="avatar-img h-40-px w-40-px max-un"
+                  class="avatar-img h-40-px w-40-px image-render max-un"
                   src="{{ item?.ProfilePicName }}"
                   [alt]="item?.Username || item?.FirstName"
                   onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
@@ -608,13 +651,16 @@
                   class="dropdown-menu"
                   (mouseleave)="editPopup.close()"
                 >
-                <button *ngIf="item?.roomId" ngbDropdownItem (click)="resendInvite(item)">
-                  <a class="droplist d-flex align-items-center gap-2">
-                    <fa-icon [icon]="['fas', 'repeat']"
-                    />
-                    <span class="data-text-color">Resend</span>
-                  </a>
-                </button>
+                  <button
+                    *ngIf="item?.roomId"
+                    ngbDropdownItem
+                    (click)="resendInvite(item)"
+                  >
+                    <a class="droplist d-flex align-items-center gap-2">
+                      <fa-icon [icon]="['fas', 'repeat']" />
+                      <span class="data-text-color">Resend</span>
+                    </a>
+                  </button>
                   <button ngbDropdownItem (click)="deleteOrLeaveChat(item)">
                     <a class="droplist d-flex align-items-center gap-2">
                       <fa-icon
@@ -636,10 +682,13 @@
         </div>
       </ng-container>
       <ng-template #noPendingRequest>
-        <h6 class="text-center">No Pending Invites</h6>
+        <h5 class="text-center">No Pending Invites</h5>
       </ng-template>
       <div *ngIf="backCanvas">
-        <button class="btn btn-primary float-end me-3 btn-sm d-sm-none" (click)="dismissSidebar()">
+        <button
+          class="btn btn-primary float-end me-3 btn-sm d-sm-none"
+          (click)="dismissSidebar()"
+        >
           <fa-icon [icon]="['fas', 'chevron-left']" />Back
         </button>
       </div>

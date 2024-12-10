@@ -41,10 +41,10 @@
     .chat-footer {
       .message-content {
         @media (min-width: 991px) {
-          position: absolute;
-          width: 100%;
-          max-width: calc(100% - 40px);
-          top: 0px;
+        position: absolute;
+        width: 100%;
+        max-width: calc(100% - 40px);
+        top: 0px;
         }
 
         @media (max-width: 575px) {
@@ -149,6 +149,16 @@
   .bg-color {
     background: var(--section-1st-color);
     box-shadow: var(--box-shadow);
+    bottom: 0;
+    @media (max-width: 579px) {
+      bottom: -25px;
+    }
+    @media (min-width: 580px) and (max-width: 991px) {
+      bottom: -60px;
+    }
+    @media (min-width: 991px) and (max-width: 1440px) {
+      bottom: -10px;
+    }
   }
 
   .box-bg {
@@ -310,16 +320,31 @@
             position: unset !important;
           }
         }
+        li.you {
+          margin-left: 5px;
+          // white-space: pre-wrap;
+          margin-bottom: 5px;
+
+          .drop-options {
+            .options {
+              padding-right: 6px;
+            }
+          }
+        }
         li.me {
           text-align: start;
-          .message {
-            // background: var(--box-1st-color);
+          margin-right: 5px;
+          // white-space: pre-wrap;
+          margin-bottom: 5px;
+          .drop-options {
+            flex-direction: row-reverse;
+            .options {
+              padding-left: 6px;
+            }
           }
-          p {
-            // color: var(--heading-1st-color);
-          }
-          span {
-            // color: var(--heading-1st-color);
+          .replay-message-media {
+            border: 1px solid var(--box-1st-color);
+            border-radius: 7px;
           }
         }
       }
@@ -327,10 +352,9 @@
         .options {
           visibility: hidden !important;
         }
-        &:hover {
-          .options {
-            visibility: visible !important;
-          }
+        &:hover .options,
+        &:focus-within .options {
+          visibility: visible !important;
         }
       }
     }
@@ -350,7 +374,8 @@
 
       .tag-input-div {
         margin-left: 50px;
-        background-color: var(--body-color);
+        background-color: var(--input-field);
+        color: var(--input-field-text) !important;
         max-width: calc(100% - 5px) !important;
         width: 100% !important;
         min-height: 44px !important;
@@ -362,6 +387,7 @@
 
         @media (max-width: 575px) {
           margin-left: 0px;
+          z-index: 1;
         }
       }
       .select-emaojies {
@@ -399,6 +425,7 @@
       display: -webkit-box;
       flex-wrap: wrap;
       overflow: hidden;
+      white-space: normal;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     }
@@ -424,31 +451,35 @@
     .highlight {
       background-color: #000 !important;
       color: #fff !important;
+      text-transform: none;
     }
     .highlighted {
       background-color: yellow !important;
-      color: #000 !important; 
+      color: #000 !important;
+      text-transform: none;
     }
     .message-text-custom {
       a {
         color: var(--para-2nd-color) !important;
       }
     }
-  }
-  .parent-replay-alt {
-    a {
-      color: var(--para-2nd-color) !important;
-      font-weight: 600 !important;
+    .parent-replay-alt {
+      a {
+        color: var(--para-2nd-color) !important;
+        font-weight: 600 !important;
+      }
     }
   }
   li.me .message {
     .highlight {
       background-color: #000 !important;
       color: #fff !important;
+      text-transform: none;
     }
     .highlighted {
       background-color: yellow !important;
       color: #000 !important;
+      text-transform: none;
     }
     svg path {
       fill: var(--secondary-color);
@@ -487,6 +518,7 @@
       font-weight: 500 !important;
       color: unset !important;
       text-wrap: unset !important;
+      white-space: normal;
     }
     a {
       font-size: 16px !important;
@@ -494,14 +526,58 @@
       margin: unset !important;
       background-color: unset !important;
       font-weight: 600 !important;
+      white-space: normal;
     }
   }
-  app-tag-user-input {
+
+  .group-input-field app-tag-user-input {
     .tag-input-div {
+      div,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      a,
+      span,
+      p {
+        color: var(--input-text) !important;
+        white-space: normal;
+      }
       a {
         color: var(--para-2nd-color) !important;
         font-weight: 600 !important;
+        white-space: normal;
       }
+    }
+  }
+
+  .parent-replay-alt,
+  .parent-replay,
+  .replay-message-box {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    span,
+    b,
+    p,
+    em,
+    div,
+    strong,
+    li {
+      font-size: 16px !important;
+      line-height: 22px !important;
+      font-weight: 500 !important;
+      white-space: normal;
+    }
+    a {
+      color: var(--para-2nd-color) !important;
+      font-weight: 600 !important;
+      white-space: normal;
     }
   }
 }

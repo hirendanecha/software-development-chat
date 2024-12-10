@@ -34,9 +34,9 @@
       <div
         class="alert alert-{{ type }}"
         role="alert"
-        *ngIf="registrationMessage || msg"
+        *ngIf="registrationMessage"
       >
-        {{ registrationMessage || msg }}
+        {{ registrationMessage }}
       </div>
       <div class="row">
         <div class="col-12 col-md-6 mb-3">
@@ -360,8 +360,11 @@
   </div>
 </div>
 <div class="text-center mt-3">
-  <p class="text-danger">
+  <p class="h6 fw-light">
     If you are having technical issues, email
-    <a href="mailto:support@softwaredevelopment.chat">{{ "support@SoftwareDevelopment.chat" }}</a>
+    <a class="h5 c-pointer custom-primary" (click)="onClick($event)"
+      >{{ "support@SoftwareDevelopment.chat" }}
+      <fa-icon class="font-16-px ms-1" [icon]="['fas', 'copy']" />
+    </a>
   </p>
 </div>

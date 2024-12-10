@@ -1,10 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from '../../services/message.service';
-import * as moment from 'moment';
+import moment from 'moment';
 import { NgbActiveOffcanvas, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MessageDatePipe } from '../../pipe/message-date.pipe';
-
 import { GalleryImgPreviewComponent } from '../gallery-img-preview/gallery-img-preview.component';
+import { ToastService } from '../../services/toast.service';
 import { FILE_EXTENSIONS, FILE_EXTENSIONS_Video } from '../../constant/file-extensions';
 @Component({
   selector: 'app-media-gallery',
@@ -17,13 +16,14 @@ export class MediaGalleryComponent implements OnInit {
   fileName: string;
   profileId: number;
   activePage = 1;
-  hasMoreData = false;
-  filterMediaList = [];
-  isMediaLoader=false; 
+  hasMoreData = true;
+  isFileLoad = false;
+
   constructor(
     private messageService: MessageService,
     public activeOffCanvas: NgbActiveOffcanvas,
-    private modelService:NgbModal
+    private modalService: NgbModal,
+    private toastService: ToastService
   ) {
     this.profileId = +localStorage.getItem('profileId');
   }
@@ -32,28 +32,56 @@ export class MediaGalleryComponent implements OnInit {
     this.getMessageMedia();
   }
 
+  loadMoreMedia() {
+    this.activePage = this.activePage + 1;
+    this.getMessageMedia();
+  }
+
   getMessageMedia(): void {
-    this.isMediaLoader = true;
+    this.isFileLoad = true;
     const data = {
+      page: this.activePage,
+      size: 10,
       roomId: this.userChat?.roomId || null,
       groupId: this.userChat?.groupId || null,
-      size: 10,
-      page: this.activePage,
     };
     this.messageService.getMessageMedia(data).subscribe({
-      next: (res: any) => {
-        this.isMediaLoader = false;
+      next: (res) => {
+        this.isFileLoad = false;
         if (this.activePage < res?.pagination.totalPages) {
           this.hasMoreData = true;
         } else {
           this.hasMoreData = false;
         }
-        this.mediaList = [...this.mediaList, ...res.data];
-        this.filterMediaList = new MessageDatePipe().transform(this.mediaList);
+        let groupedMediaList = [];
+        res.data.forEach((ele) => {
+          const messageDate = new Date(ele?.createdDate);
+          const today = new Date();
+          const yesterday = new Date(today);
+          yesterday.setDate(today.getDate() - 1);
+          let groupHeader = '';
+          if (messageDate.toDateString() === today.toDateString()) {
+            groupHeader = 'Today';
+          } else if (messageDate.toDateString() === yesterday.toDateString()) {
+            groupHeader = 'Yesterday';
+          } else {
+            groupHeader = moment.utc(messageDate).local().format('DD-MMM-YYYY');
+          }
+          const existingGroupIndex = groupedMediaList.findIndex(
+            (group) => group.date === groupHeader
+          );
+
+          if (existingGroupIndex === -1) {
+            groupedMediaList.push({ date: groupHeader, messages: [ele] });
+          } else {
+            groupedMediaList[existingGroupIndex].messages.push(ele);
+          }
+        });
+        this.mediaList = [...this.mediaList, ...groupedMediaList];
       },
       error: (error) => {
         console.log(error);
-        this.isMediaLoader = false;
+        this.isFileLoad = false;
       },
     });
   }
@@ -63,27 +91,30 @@ export class MediaGalleryComponent implements OnInit {
     const File = FILE_EXTENSIONS;
     return File.some((ext) => media?.endsWith(ext));
   }
+  
   isVideoFile(media: string): boolean {
     const FILE_EXTENSIONS = FILE_EXTENSIONS_Video;
     return FILE_EXTENSIONS.some((ext) => media?.endsWith(ext));
   }
 
-  pdfView(pdfUrl: string) {
-    window.open(pdfUrl);
+  isGif(src: string): boolean {
+    return !src?.toLowerCase()?.endsWith('.gif');
   }
 
-  loadMoreMedia() {
-    this.activePage = this.activePage + 1;
-    this.getMessageMedia();
+  pdfView(pdfUrl: string) {
+    window.open(pdfUrl);
+    this.toastService.success('Download successfully initiated.');
   }
 
   downloadPdf(data): void {
     const pdfLink = document.createElement('a');
     pdfLink.href = data;
     pdfLink.click();
+    this.toastService.success('Download successfully initiated.');
   }
+
   openImagePreview(src: string) {
-    const modalRef = this.modelService.open(GalleryImgPreviewComponent, {
+    const modalRef = this.modalService.open(GalleryImgPreviewComponent, {
       backdrop: 'static',
     });
     modalRef.componentInstance.src = src;

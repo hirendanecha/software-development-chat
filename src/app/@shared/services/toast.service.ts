@@ -5,18 +5,22 @@ export class ToastService {
   toasts: any = [];
 
   success(msg: string) {
+    this.clear();
     this.toasts.push({ textOrTpl: msg, className: 'bg-success text-light' });
   }
 
   danger(msg: string) {
+    this.clear();
     this.toasts.push({ textOrTpl: msg, className: 'bg-danger text-light' });
   }
 
   info(msg: string) {
+    this.clear();
     this.toasts.push({ textOrTpl: msg, className: 'bg-info text-light' });
   }
 
   warring(msg: string) {
+    this.clear();
     this.toasts.push({ textOrTpl: msg, className: 'bg-warning text-light' });
   }
 

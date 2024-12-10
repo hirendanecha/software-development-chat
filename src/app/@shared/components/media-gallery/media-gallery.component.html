@@ -8,17 +8,19 @@
     >
       <fa-icon
         [icon]="['fas', 'xmark']"
-        class="c-pointer close-icon font-32-px xmark-icon"
+        class="c-pointer close-icon font-32-px"
         (click)="activeOffCanvas.close()"
       />
     </div>
   </div>
 
-  <ng-container *ngIf="filterMediaList.length; else noMedia">
+  <ng-container *ngIf="mediaList.length; else noMedia">
     <div class="cus-scrollbar-pending overflow-y-auto">
-      <div class="media-content p-2" *ngFor="let media of filterMediaList">
+      <div class="media-content p-2" *ngFor="let media of mediaList">
         <h4 class="mb-0">{{ media.date }}</h4>
-        <div *ngFor="let message of media.messages">
+        <div
+          *ngFor="let message of media.messages; let i = index; let l = last"
+        >
           <div class="btn-group d-flex options float-end">
             <div ngbDropdown #editPopup="ngbDropdown" class="d-inline-block">
               <button class="dropdown-btn" ngbDropdownToggle>
@@ -46,7 +48,7 @@
               message.createdDate | date : "h:mm a"
             }}</span
           >
-          <div class="message-media m-1">
+          <div class="message-media m-1 mb-2">
             <ng-container *ngIf="isFile(message?.messageMedia); else imageMsg">
               <div class="message p-2" (click)="pdfView(message?.messageMedia)">
                 <fa-icon
@@ -106,11 +108,7 @@
       </div>
     </div>
   </ng-container>
-
-  <ng-container>
-    <app-inline-loader class="position-absolute" *ngIf="isMediaLoader" />
-  </ng-container>
-
+  <app-inline-loader class="position-absolute" *ngIf="isFileLoad" />
   <ng-template #noMedia>
     <p class="text-center h5 mt-5">No media available</p>
   </ng-template>

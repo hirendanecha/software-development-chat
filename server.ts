@@ -2,7 +2,7 @@ import 'zone.js/node';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
-import * as express from 'express';
+import express from 'express';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import fetch from 'node-fetch';
@@ -40,6 +40,7 @@ export function app(): express.Express {
   global['Event'] = window.Event;
   global['Event']['prototype'] = window.Event.prototype;
   global['HTMLElement'] = window.HTMLElement;
+  global['jwplayer'] = window.jwplayer;
   global['getComputedStyle'] = window.getComputedStyle;
   server.engine(
     'html',
@@ -83,8 +84,6 @@ export function app(): express.Express {
           let id = params.split('/');
           id = +id[id.length - 1];
           const { data: profile }: any = await getProfile(id);
-
-          console.log({ params }, { id }, { profile: JSON.stringify(profile) });
           const talent = {
             name: profile[0]?.Username,
             description: profile[0].FirstName + ' ' + profile[0].LastName,

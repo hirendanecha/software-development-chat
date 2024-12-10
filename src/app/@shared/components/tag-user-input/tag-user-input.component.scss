@@ -4,26 +4,19 @@
   width: 100%;
 
   .tag-input-div {
-    font-size: 16px !important;
+    z-index: 1;
+    font-size: 18px !important;
     min-height: 56px;
     // line-break: anywhere;
     text-align: start;
     max-width: 541px;
     width: calc(100% - 60px);
     overflow: hidden;
+    // white-space: pre-wrap;
     overflow-wrap: anywhere;
 
     @media (max-width: 767px) {
       max-width: 395px;
-    }
-    @media (max-width: 552px) {
-      max-width: 340px;
-    }
-    @media (max-width: 494px) {
-      max-width: 280px;
-    }
-    @media (max-width: 432px) {
-      max-width: 220px;
     }
 
     div {
@@ -91,11 +84,12 @@
     p {
       background: unset !important;
       background-color: unset !important;
-      font-size: 16px !important;
+      font-size: 18px !important;
       line-height: unset !important;
       color: var(--para-2nd-color) !important;
       font-weight: 400 !important;
       overflow-wrap: anywhere;
+      margin: 0;
     }
     // br {
     //   display: none;

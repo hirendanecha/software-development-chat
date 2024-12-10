@@ -1,5 +1,5 @@
 .login-content {
-  .bg-color{
+  .bg-color {
     background: #3a4a67;
     // background: var(--box-1st-color);
   }
@@ -27,8 +27,11 @@
       }
     }
   }
+  .custom-primary {
+    color: var(--link-color) !important;
+  }
   .custom-input-area {
-    fa-icon{
+    fa-icon {
       top: 11px;
       right: 15px;
       background-color: var(--box-1st-color);

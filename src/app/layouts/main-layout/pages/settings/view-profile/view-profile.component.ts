@@ -40,10 +40,12 @@ export class ViewProfileComponent implements OnInit, AfterViewInit {
     private toastService: ToastService
   ) {
     this.router.events.subscribe((event: any) => {
-      const id = event?.routerEvent?.url.split('/')[3];
-      this.profileId = id
-      if (id) {
-        this.getProfile(id);
+      if (event?.routerEvent?.url.includes('/settings/view-profile')) {
+        const id = event?.routerEvent?.url.split('/')[3];
+        this.profileId = id;
+        if (id) {
+          this.getProfile(id);
+        }
       }
       this.profileId = +localStorage.getItem('profileId');
     });
