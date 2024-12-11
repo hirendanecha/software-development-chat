@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.messageNotificationSound =
               user.messageNotificationSound === 'Y' || false;
           });
-          if (data?.notificationByProfileId !== this.profileId) {
+          if (data?.notificationByProfileId !== this.profileId && !data.status) {
             this.sharedService.setNotify(true);
             // this.sharedService.isNotify = true;
             this.originalFavicon.href = '/assets/images/icon-unread.jpg';

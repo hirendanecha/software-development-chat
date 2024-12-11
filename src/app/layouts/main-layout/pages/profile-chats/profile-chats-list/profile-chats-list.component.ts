@@ -1217,6 +1217,7 @@ export class ProfileChatsListComponent
     this.socketService.switchOnlineStatus(data, (res) => {
       this.sharedService.userData.userStatus = res.status;
       this.sharedService.getLoginUserDetails(this.sharedService.userData);
+      this.cdr.markForCheck();
       // localUserData.userStatus = res.status;
       // localStorage.setItem('userData', JSON.stringify(localUserData));
     });
