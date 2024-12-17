@@ -534,16 +534,14 @@
                 <h6 class="m-0 d-inline-flex sidebar-head-text">
                   {{ item?.groupName || item?.Username }}
                 </h6>
-                <span
-                  class="font-16-px last-message"
-                  *ngIf="item?.lastMessageText !== null"
-                  [innerHTML]="
-                    encryptDecryptService.decryptUsingAES256(
-                      item?.lastMessageText
-                    )
-                  "
-                >
-                </span>
+                <span 
+                class="font-16-px last-message" 
+                *ngIf="item?.lastMessageText !== null"
+                [innerHTML]="
+                item.sentBy === profileId ? (encryptDecryptService.decryptUsingAES256(item.lastMessageText) === 'Missed call'
+                ? 'No answer' : encryptDecryptService.decryptUsingAES256(item.lastMessageText))
+                : encryptDecryptService.decryptUsingAES256(item.lastMessageText)">
+              </span>
               </div>
               <div class="d-flex align-items-center">
                 <span

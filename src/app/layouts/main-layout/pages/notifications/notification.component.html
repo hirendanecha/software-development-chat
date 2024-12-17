@@ -63,7 +63,7 @@
                     notification?.Username
                   }}</a>
                   <span class="ms-1"
-                    >{{ notification?.notificationDesc }}
+                    >{{ customName(notification) }}
                   </span>
                   <span
                     *ngIf="notification.isRead === 'N'"

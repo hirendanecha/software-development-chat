@@ -204,6 +204,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               ) {
                 const callIdMatch = data.link.match(/callId-\d+/);
                 const callId = callIdMatch ? callIdMatch[0] : data.link;
+                this.sharedService.setExistingCallData(chatDataPass);
                 this.router.navigate([`/facetime/${callId}`], {
                   state: { chatDataPass },
                 });

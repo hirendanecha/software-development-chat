@@ -57,7 +57,7 @@ export class AppointmentCallComponent implements OnInit {
     this.profileId = +localStorage.getItem('profileId');
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.hasCredentials = !!this.tokenService.getCredentials();
     const stateData = window.history.state.chatDataPass;
     if (stateData) {
@@ -68,7 +68,7 @@ export class AppointmentCallComponent implements OnInit {
     }
     const appointmentURLCall =
       this.route.snapshot['_routerState'].url.split('/facetime/')[1];
-    sessionStorage.setItem('callId', appointmentURLCall);
+    localStorage.setItem('callId', appointmentURLCall);
     window.history.pushState(null, '', window.location.href);
     window.history.replaceState(null, '', window.location.href);
     window.onpopstate = () => {
@@ -101,20 +101,26 @@ export class AppointmentCallComponent implements OnInit {
 
     api.on('readyToClose', () => {
       this.sharedService.callId = null;
-      sessionStorage.removeItem('callId');
+      const numberOfParticipants = Number(api.getNumberOfParticipants());
+      const existingCall = this.sharedService.getExistingCallData();
       const data = {
-        profileId: this.profileId,
-        roomId: this.openChatId.roomId,
-        groupId: this.openChatId.groupId,
+        // profileId: this.profileId,
+        roomId: this.openChatId?.roomId || existingCall?.roomId,
+        groupId: this.openChatId?.groupId || existingCall?.groupId,
+        callLink: localStorage.getItem('callId'),
+      };
+      if (numberOfParticipants === 0 || data.roomId) {
+        data['members'] = 0;
+        data['isOnCall'] = 'N';
+      } else {
+        data['members'] = existingCall?.members - 1;
+        data['isOnCall'] = 'Y';
       }
       this.socketService?.endCall(data);
-      this.router.navigate(['/profile-chats']).then(() => {
-        // api.dispose();
-        // console.log('opaaaaa');
-      });
+      this.router.navigate(['/profile-chats']).then(() => {});
     });
 
-    this.initialChat()
+    this.initialChat();
   }
 
   initialChat() {
@@ -186,13 +192,13 @@ export class AppointmentCallComponent implements OnInit {
     if (this.screenSubscription) {
       this.screenSubscription.unsubscribe();
     }
-    sessionStorage.removeItem('callId');
+    localStorage.removeItem('callId');
     this.sharedService.callId = null;
   }
 
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
-    sessionStorage.removeItem('callId');
+    localStorage.removeItem('callId');
     this.sharedService.callId = null;
   }
 }

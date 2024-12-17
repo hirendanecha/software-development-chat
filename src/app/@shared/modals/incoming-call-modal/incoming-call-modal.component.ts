@@ -51,10 +51,13 @@ export class IncomingcallModalComponent
     private sharedService: SharedService
   ) {
     this.profileId = +localStorage.getItem('profileId');
-    // this.isOnCall = this.router.url.includes('/facetime/') || false;
+    this.isOnCall =
+      this.router.url.includes('/facetime/') || localStorage.getItem('callId')
+        ? true
+        : false;
   }
   ngAfterViewInit(): void {
-    this.isOnCall = this.calldata?.isOnCall === 'Y' || false;
+    // this.isOnCall = this.calldata?.isOnCall === 'Y' || false;
     this.soundControlService.initStorageListener();
     this.soundEnabledSubscription =
       this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
@@ -105,6 +108,7 @@ export class IncomingcallModalComponent
         roomId: this.calldata.roomId || null,
         groupId: this.calldata.groupId || null,
       };
+      this.sharedService.setExistingCallData(chatDataPass);
       if (this.calldata?.roomId || this.calldata.groupId) {
         localStorage.setItem(
           'callRoomId',
@@ -119,10 +123,7 @@ export class IncomingcallModalComponent
           state: { chatDataPass },
         });
       } else {
-        const callId = this.calldata.link.replace(
-          'https://meet.facetime.tube/',
-          ''
-        );
+        const callId = this.calldata.link.replace('https://meet.facetime.tube/', '');
         this.router.navigate([`/facetime/${callId}`], {
           state: { chatDataPass },
         });
@@ -139,6 +140,7 @@ export class IncomingcallModalComponent
       notificationByProfileId:
         this.calldata.notificationToProfileId || this.profileId,
       link: this.calldata.link,
+      members: this.calldata.members + 1,
     };
 
     const buzzRingData = {
@@ -171,6 +173,8 @@ export class IncomingcallModalComponent
       notificationByProfileId:
         this.calldata.notificationToProfileId || this.profileId,
       message: isCallCut ? 'Missed call' : 'No Answer',
+      messageType: 'C',
+      members: this.calldata?.roomId ? 0 : this.calldata.members,
     };
     this.socketService?.hangUpCall(data, (data: any) => {
       if (isCallCut && messageText) {
@@ -187,6 +191,7 @@ export class IncomingcallModalComponent
       groupId: this.calldata?.groupId || null,
       sentBy: this.calldata.notificationToProfileId || this.profileId,
       profileId: this.calldata.notificationByProfileId || this.profileId,
+      messageType: 'D',
     };
     if (!window.document.hidden) {
       this.socketService.sendMessage(data, async (data: any) => {});

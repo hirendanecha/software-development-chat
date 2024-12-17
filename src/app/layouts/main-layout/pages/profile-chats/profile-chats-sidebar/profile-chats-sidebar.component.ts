@@ -96,9 +96,10 @@ export class ProfileChatsSidebarComponent
     this.socketService?.socket?.on('isReadNotification_ack', (data) => {
       if (data?.profileId) {
         // this.sharedService.isNotify = false;
-        this.sharedService.setNotify(false);
+        // this.sharedService.setNotify(false);
+        // this.originalFavicon.href = '/assets/images/icon.jpg';
         localStorage.setItem('isRead', data?.isRead);
-        this.originalFavicon.href = '/assets/images/icon.jpg';
+        this.notificationNavigation();
       }
     });
     this.profileId = +localStorage.getItem('profileId');
@@ -282,7 +283,7 @@ export class ProfileChatsSidebarComponent
     if (item.groupId) {
       item.isAccepted = 'Y';
     }
-    // this.notificationNavigation()
+    this.notificationNavigation();
     const data = {
       Id: item.profileId,
       ProfilePicName: item.ProfilePicName,
@@ -297,6 +298,15 @@ export class ProfileChatsSidebarComponent
       }
     }
     this.cdr.detectChanges();
+  }
+
+  notificationNavigation() {
+    const isRead = localStorage.getItem('isRead');
+    if (isRead === 'Y') {
+      this.originalFavicon.href = '/assets/images/icon.jpg';
+      this.sharedService.setNotify(false);
+      // this.socketService.readNotification({ profileId: this.profileId }, (data) => { });
+    }
   }
 
   goToViewProfile(): void {

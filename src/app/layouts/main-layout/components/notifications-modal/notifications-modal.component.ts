@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbActiveModal, NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { CustomerService } from 'src/app/@shared/services/customer.service';
@@ -12,6 +12,8 @@ import { SocketService } from 'src/app/@shared/services/socket.service';
 })
 export class NotificationsModalComponent implements AfterViewInit {
   originalFavicon: HTMLLinkElement;
+  @ViewChild('notificationArea') notificationArea: ElementRef;
+
   constructor(
     public sharedService: SharedService,
     private activeModal: NgbActiveModal,
@@ -28,6 +30,9 @@ export class NotificationsModalComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const profileId = +localStorage.getItem('profileId');
     this.socketService.readNotification({ profileId }, (data) => {});
+    if (this.notificationArea) {
+      this.notificationArea.nativeElement.scrollTop = 0;
+    }
   }
 
   readUnreadNotification(postId: string, notification: any = {}): void {
@@ -80,5 +85,14 @@ export class NotificationsModalComponent implements AfterViewInit {
     //   );
     //   window.open(url, '_blank');
     // }
+  }
+
+  customName(notification): string {
+    if (!notification?.notificationDesc || !notification?.Username) {
+      return notification?.notificationDesc || '';
+    }
+    const username = notification.Username;
+    const boldUsername = `<b>${username}</b>`;
+    return notification.notificationDesc.replace(new RegExp(`\\b${username}\\b`, 'g'), boldUsername);
   }
 }

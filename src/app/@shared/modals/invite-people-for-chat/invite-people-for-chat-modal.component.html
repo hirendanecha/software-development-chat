@@ -90,12 +90,21 @@
             </div>
           </div>
         </div>
-        <fa-icon
-          [icon]="['fas', 'xmark']"
-          class="font-20-px"
-          role="button"
-          (click)="removeUser()"
-        />
+        <ng-container *ngIf="selectedUsers.flag === 'Available' else showStatus">
+          <fa-icon
+            [icon]="['fas', 'xmark']"
+            class="font-20-px"
+            role="button"
+            (click)="removeUser()"
+          />
+        </ng-container>
+        <ng-template #showStatus>
+          <button class="btn btn-sm"
+            [ngClass]="selectedUsers.flag === 'Added' 
+            ? 'btn-success' : 'btn-primary'">
+            {{selectedUsers.flag}}
+          </button>
+        </ng-template>
       </div>
     </div>
   </div>
@@ -109,8 +118,12 @@
   >
     {{ cancelButtonLabel }}
   </button>
-
-  <button type="button" class="btn btn-sm btn-success" (click)="onChat()">
-    {{ confirmButtonLabel }}
+  <button
+  type="button"
+  class="btn btn-sm"
+  [ngClass]="selectedUsers.flag === 'Available' ? 'btn-success' : 'btn-secondary'"
+  (click)="selectedUsers.flag === 'Available' ? onChat() : removeUser()"
+  >
+    {{ selectedUsers.flag === 'Available' ? confirmButtonLabel : 'Clear' }}
   </button>
 </div>

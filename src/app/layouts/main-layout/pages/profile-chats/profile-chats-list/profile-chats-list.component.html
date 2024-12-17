@@ -90,6 +90,11 @@
             class="d-flex gap-3 align-items-center"
             *ngIf="userChat.isAccepted === 'Y'"
           >
+            <div class="ongoing-call d-center position-relative" *ngIf="isOnCall && !callId">
+              <a routerLinkActive="active" (click)="goToOnGoingCall()">
+                <fa-icon [icon]="['fas', 'phone-volume']" class="font-20-px" />
+              </a>
+            </div>
             <a class="d-none d-sm-flex" (click)="openSearch(isSearch)">
               <fa-icon
                 [icon]="['fas', 'search']"
@@ -222,17 +227,19 @@
                 ><fa-icon [icon]="['fas', 'users']" class="font-20-px m-1"
               /></a>
               <a
-                *ngIf="callRoomId !== userChat.roomId"
-                class="nav-icon cursor"
-                data-toggle="tooltip"
-                data-placement="bottom"
-                title="{{ isOnCall ? 'Add in Call' : 'Video Call' }}"
-                (click)="startCall()"
-              >
-                <fa-icon
-                  *ngIf="!isOnCall"
-                  [icon]="['fas', 'phone']"
-                  class="font-20-px m-1"
+              *ngIf="callRoomId !== userChat.roomId || sharedService?.getExistingCallData()?.roomId !== userChat.roomId"
+              class="nav-icon cursor"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="{{
+                isOnCall ? 'Add in Call' : 'Video Call'
+              }}"
+              (click)="startCall()"
+            >
+              <fa-icon
+                *ngIf="!isOnCall"
+                [icon]="['fas', 'phone']"
+                class="font-20-px m-1"
                 />
                 <fa-icon
                   *ngIf="isOnCall"

@@ -47,15 +47,14 @@ export class InvitePeopleForChatModalComponent {
           this.userList = res.data.filter(
             (user: any) => user.Id !== this.sharedService?.userData?.profileId
           );
-          this.userList = this.userList.filter(
-            (user: any) =>
-              !this.chatList.some(
-                (chatUser: any) => chatUser.profileId === user.Id
-              ) &&
-              !this.pendingChatList.some(
-                (chatUser: any) => chatUser.profileId === user.Id
-              )
-          );
+          this.userList = this.userList.map((user: any) => {
+            const isFriend = this.chatList.some((chatUser: any) => chatUser.profileId === user.Id);
+            const isPending = this.pendingChatList.some((chatUser: any) => chatUser.profileId === user.Id);
+            return {
+              ...user,
+              flag: isFriend ? 'Added' : isPending ? 'Pending' : 'Available'
+            };
+          });           
           this.userSearchNgbDropdown?.open();
         } else {
           this.userList = [];
@@ -81,6 +80,9 @@ export class InvitePeopleForChatModalComponent {
 
   removeUser() {
     this.selectedUsers = {};
+    // this.addedInvitesList = this.addedInvitesList.filter(
+    //   (user) => user.Id !== item.Id
+    // );
   }
 
   closeModal(): void {
