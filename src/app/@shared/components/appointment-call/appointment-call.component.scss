@@ -121,12 +121,21 @@
               background: var(--box-1st-color);
               border-top-left-radius: 0;
             }
+            .drop-options .options {
+              padding-right: 6px;
+            }
           }
           &.me {
             text-align: start;
             align-items: flex-end;
             margin-left: auto;
             justify-content: flex-end;
+            .drop-options {
+              flex-direction: row-reverse;
+              .options {
+                padding-left: 6px;
+              }
+            }
             .message {
               background: #00a3ff;
               border-bottom-right-radius: 0;

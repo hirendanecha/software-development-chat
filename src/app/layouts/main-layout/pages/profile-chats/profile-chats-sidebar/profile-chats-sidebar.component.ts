@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -73,6 +74,8 @@ export class ProfileChatsSidebarComponent
   @Output('onNewChat') onNewChat: EventEmitter<any> = new EventEmitter<any>();
   @Input('isRoomCreated') isRoomCreated: boolean = false;
   @Input('selectedRoomId') selectedRoomId: number = null;
+  @ViewChild('chatSidebar') chatSidebar: ElementRef;
+
   userStatus: string;
   originalFavicon: HTMLLinkElement;
   constructor(
@@ -377,6 +380,9 @@ export class ProfileChatsSidebarComponent
       });
       this.messageService.chatList.push(this.newChatList);
     }
+    if (this.chatSidebar) {
+      this.chatSidebar.nativeElement.scrollTop = 0;
+    };
     this.cdr.markForCheck();
   }
 

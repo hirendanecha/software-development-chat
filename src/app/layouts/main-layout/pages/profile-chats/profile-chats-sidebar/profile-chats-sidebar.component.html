@@ -292,7 +292,7 @@
         </button>
       </div>
     </div>
-    <div
+    <div #chatSidebar
       [ngClass]="{
         'header-menu cus-scrollbar overflow-auto position-relative':
           selectedButton === 'chats'
@@ -318,12 +318,11 @@
               >
                 <div class="d-flex gap-2">
                   <div class="avatar">
-                    <img
-                      class="avatar-img h-40-px w-40-px max-un"
-                      src="{{ item?.ProfilePicName }}"
-                      [alt]="item?.Username"
-                      onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
-                    />
+                    <img *ngIf="item?.ProfilePicName" class="avatar-img h-40-px w-40-px image-render max-un"
+                      src="{{ item?.ProfilePicName }}" [alt]="item?.Username || item?.FirstName" />
+                    <div class="default_40" *ngIf="!item?.ProfilePicName">
+                      {{ item?.Username?.substring(0, 2).toUpperCase() }}
+                    </div>
                   </div>
                   <div
                     class="text-area d-flex justify-content-between sidebar-items align-items-center"

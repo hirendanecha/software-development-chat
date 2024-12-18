@@ -10,11 +10,19 @@
         class="d-flex flex-column justify-content-center align-items-center gap-3 my-8 p-6 rounded-3 box-bg w-75"
       >
         <img
+          *ngIf="userChat?.ProfilePicName"
           [src]="userChat.ProfilePicName"
           class="w-60-px h-60-px"
           alt="image"
-          onerror="this.onerror=null;this.src='/assets/images/default-profile.jpg';"
-        />
+          />
+        <div
+        class="default_40"
+        *ngIf="!userChat?.ProfilePicName"
+        >
+        {{
+          userChat?.Username?.substring(0, 2).toUpperCase()
+        }}
+      </div>
         <h5>send invite to {{ userChat?.Username }} for chat</h5>
         <div>
           <button class="btn btn-danger mx-3" (click)="onCancel()">
@@ -58,11 +66,27 @@
             (click)="userChat.groupId ? groupEditDetails(groupData) : ''"
           >
             <img
-            [src]="userChat?.profileImage || userChat?.ProfilePicName || '/assets/images/avtar/placeholder-user.png'"
-              class="rounded-circle header-image"
-              alt="image"
-              onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
-            />
+            *ngIf="userChat?.roomId && userChat?.ProfilePicName"
+            class="rounded-circle header-image"
+            src="{{ userChat?.ProfilePicName }}"
+            [alt]="userChat?.Username"
+          />
+          <img
+            *ngIf="userChat?.groupId && userChat?.profileImage"
+            class="rounded-circle header-image"
+            src="{{ userChat?.profileImage }}"
+            [alt]="userChat?.groupName"
+          />
+          <div class="default_58" *ngIf="
+            !((userChat.groupId && userChat?.profileImage) ||
+              (userChat.roomId && userChat?.ProfilePicName))
+            ">
+            {{
+            userChat?.roomId
+            ? userChat?.Username?.substring(0, 2).toUpperCase()
+            : userChat?.groupName?.substring(0, 2).toUpperCase()
+            }}
+          </div>
             <div class="d-flex align-items-baseline">
               <div class="profile-status">
                 <h5 class="m-0">
@@ -90,7 +114,10 @@
             class="d-flex gap-3 align-items-center"
             *ngIf="userChat.isAccepted === 'Y'"
           >
-            <div class="ongoing-call d-center position-relative" *ngIf="isOnCall && !callId">
+            <div
+              class="ongoing-call d-center position-relative"
+              *ngIf="isOnCall && !callId"
+            >
               <a routerLinkActive="active" (click)="goToOnGoingCall()">
                 <fa-icon [icon]="['fas', 'phone-volume']" class="font-20-px" />
               </a>
@@ -227,19 +254,19 @@
                 ><fa-icon [icon]="['fas', 'users']" class="font-20-px m-1"
               /></a>
               <a
-              *ngIf="callRoomId !== userChat.roomId || sharedService?.getExistingCallData()?.roomId !== userChat.roomId"
-              class="nav-icon cursor"
-              data-toggle="tooltip"
-              data-placement="bottom"
-              title="{{
-                isOnCall ? 'Add in Call' : 'Video Call'
-              }}"
-              (click)="startCall()"
-            >
-              <fa-icon
-                *ngIf="!isOnCall"
-                [icon]="['fas', 'phone']"
-                class="font-20-px m-1"
+                *ngIf="callRoomId !== userChat.roomId || sharedService?.getExistingCallData()?.roomId !== userChat.roomId"
+                class="nav-icon cursor"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="{{
+                  isOnCall ? 'Add in Call' : 'Video Call'
+                }}"
+                (click)="startCall()"
+              >
+                <fa-icon
+                  *ngIf="!isOnCall"
+                  [icon]="['fas', 'phone']"
+                  class="font-20-px m-1"
                 />
                 <fa-icon
                   *ngIf="isOnCall"
@@ -348,7 +375,7 @@
                       />
                       <span>View Profile</span>
                     </a>
-                  </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -409,7 +436,6 @@
                 [src]="userChat.ProfilePicName"
                 class="w-60-px h-60-px"
                 alt="image"
-                onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
               />
               <h5>{{ userChat?.Username }} wants to connect with you</h5>
               <div>
@@ -434,12 +460,21 @@
             <div
               class="d-flex flex-column justify-content-center align-items-center gap-3 my-8 p-6 rounded-3 box-bg"
             >
-              <img
-                [src]="userChat.ProfilePicName"
-                class="rounded-circle w-60-px h-60-px"
-                alt="image"
-                onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png'"
-              />
+            <img
+            *ngIf="userChat?.ProfilePicName"
+            [src]="userChat.ProfilePicName"
+            class="rounded-circle w-60-px h-60-px"
+            alt="image"
+            />
+            <!-- onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';" -->
+            <div
+              class="default_40"
+              *ngIf="!userChat?.ProfilePicName"
+              >
+              {{
+                userChat?.Username?.substring(0, 2).toUpperCase()
+              }}
+          </div>
               <h5>{{ userChat?.Username }} has not yet accepted the invite</h5>
             </div>
           </div>
@@ -462,170 +497,173 @@
             ></fa-icon>
             <span>Loadmore</span>
           </div> -->
-          <ul
-            class="py-2 px-3 cus-scrollbar bottom-0 main-chat-box"
-          >
-          <ng-container *ngFor="let msg of filteredMessageList">
-            <span class="d-flex w-100 justify-content-center custom-border">
-              {{ msg?.date || "Today" }}</span
-            >
+          <ul class="py-2 px-3 cus-scrollbar bottom-0 main-chat-box">
+            <ng-container *ngFor="let msg of filteredMessageList">
+              <span class="d-flex w-100 justify-content-center custom-border">
+                {{ msg?.date || "Today" }}</span
+              >
             <ng-container *ngFor="let message of msg?.messages; let i = index">
-              <ng-container *ngIf="message?.createdDate">
+                <ng-container *ngIf="message?.createdDate">
                 <div class="d-flex" [ngClass]="message?.sentBy === profileId ? 'flex-row-reverse' : 'flex-row'">
                   <span class="font-12-px data-text-color" [ngClass]="message?.sentBy === profileId ? 'me-3' : 'ms-3'">
                     <span class="font-12-px" *ngIf="message?.sentBy !== profileId">{{ message?.Username }},</span>
                     {{ displayLocalTime(message?.createdDate) }}</span>
-                </div>
-              </ng-container>
+                  </div>
+                </ng-container>
 
               <li [class.you]="message?.sentBy !== profileId" [class.me]="message?.sentBy === profileId" #message
                 [class.highlighted]="i === currentHighlightedIndex">
 
-                <div class="d-flex drop-options">
-                  <!-- Options Dropdown -->
+                  <div class="d-flex drop-options">
+                    <!-- Options Dropdown -->
                   <div class="btn-group d-flex options" *ngIf="message?.messageMedia || message?.messageText">
                     <div ngbDropdown #editPopup="ngbDropdown" class="d-inline-block">
-                      <button class="dropdown-btn" ngbDropdownToggle>
+                        <button class="dropdown-btn" ngbDropdownToggle>
                         <fa-icon [icon]="['fas', 'ellipsis-v']" class="font-20-px"></fa-icon>
-                      </button>
+                        </button>
                       <div ngbDropdownMenu class="dropdown-menu" (mouseleave)="editPopup.close()">
-                        <button ngbDropdownItem (click)="replyMsg(message)">
-                          <a class="droplist d-flex align-items-center gap-2">
-                            <fa-icon [icon]="['fas', 'reply']"></fa-icon>
-                            <span class="data-text-color">Reply</span>
-                          </a>
-                        </button>
-                        <button ngbDropdownItem (click)="forwardMsg(message)">
-                          <a class="droplist d-flex align-items-center gap-2">
+                          <button ngbDropdownItem (click)="replyMsg(message)">
+                            <a class="droplist d-flex align-items-center gap-2">
+                              <fa-icon [icon]="['fas', 'reply']"></fa-icon>
+                              <span class="data-text-color">Reply</span>
+                            </a>
+                          </button>
+                          <button ngbDropdownItem (click)="forwardMsg(message)">
+                            <a class="droplist d-flex align-items-center gap-2">
                             <fa-icon class="forward-msg" [icon]="['fas', 'reply']"></fa-icon>
-                            <span class="data-text-color">Forward</span>
-                          </a>
-                        </button>
+                              <span class="data-text-color">Forward</span>
+                            </a>
+                          </button>
                         <ng-container *ngIf="message?.messageMedia || message?.metaData?.url">
-                          <button ngbDropdownItem>
+                            <button ngbDropdownItem>
                             <a class="droplist d-flex align-items-center gap-2"
                               [appCopyClipboard]="message?.messageMedia || message?.metaData?.url">
-                              <fa-icon [icon]="['fas', 'link']"></fa-icon>
-                              <span class="data-text-color">Copy link</span>
-                            </a>
-                          </button>
-                        </ng-container>
-                        <ng-container *ngIf="message?.messageMedia">
+                                <fa-icon [icon]="['fas', 'link']"></fa-icon>
+                                <span class="data-text-color">Copy link</span>
+                              </a>
+                            </button>
+                          </ng-container>
+                          <ng-container *ngIf="message?.messageMedia">
                           <button ngbDropdownItem (click)="downloadMedia(message?.messageMedia)">
                             <a class="droplist d-flex align-items-center gap-2">
-                              <fa-icon [icon]="['fas', 'download']"></fa-icon>
-                              <span class="data-text-color">Download</span>
-                            </a>
-                          </button>
-                        </ng-container>
-                        <ng-container *ngIf="message?.sentBy === profileId">
+                                <fa-icon [icon]="['fas', 'download']"></fa-icon>
+                                <span class="data-text-color">Download</span>
+                              </a>
+                            </button>
+                          </ng-container>
+                          <ng-container *ngIf="message?.sentBy === profileId">
                           <button ngbDropdownItem (click)="editMsg(message)" *ngIf="message?.messageText">
                             <a class="droplist d-flex align-items-center gap-2">
-                              <fa-icon [icon]="['fas', 'pen-to-square']" />
-                              <span class="data-text-color">Edit</span>
-                            </a>
-                          </button>
+                                <fa-icon [icon]="['fas', 'pen-to-square']" />
+                                <span class="data-text-color">Edit</span>
+                              </a>
+                            </button>
                           <button ngbDropdownItem (click)="deleteMsg(message, msg?.date)">
                             <a class="droplist d-flex align-items-center gap-2">
-                              <fa-icon [icon]="['fas', 'trash-can']" />
-                              <span class="data-text-color">Delete</span>
-                            </a>
-                          </button>
-                        </ng-container>
+                                <fa-icon [icon]="['fas', 'trash-can']" />
+                                <span class="data-text-color">Delete</span>
+                              </a>
+                            </button>
+                          </ng-container>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Message Content -->
-                  <div class="d-flex flex-column">
-                    <div *ngIf="message?.messageMedia">
-                      <ng-container
+                    <!-- Message Content -->
+                    <div class="d-flex flex-column">
+                      <div *ngIf="message?.messageMedia">
+                        <ng-container
                         *ngTemplateOutlet="renderMedia; context: { media: message?.messageMedia }"></ng-container>
-                    </div>
+                      </div>
                     <div *ngIf="message?.messageText || message?.parentMessageId"
                       class="message d-flex gap-3 flex-column">
-                      <!-- Parent Message -->
-                      <ng-container *ngIf="message?.parentMessageId">
-                        <div class="parent-replay-alt">
-                          <fa-icon [icon]="['fas', 'reply']"></fa-icon>
-                          <ng-container
+                        <!-- Parent Message -->
+                        <ng-container *ngIf="message?.parentMessageId">
+                          <div class="parent-replay-alt">
+                            <fa-icon [icon]="['fas', 'reply']"></fa-icon>
+                            <ng-container
                             *ngTemplateOutlet="renderParentMessage; context: { parentMessage: message?.parentMessage }"></ng-container>
-                        </div>
-                      </ng-container>
-                      <!-- Message Text -->
-                      <div>
-                        <!-- <p *ngIf="message?.messageText" class="m-0 message-text-custom"
+                          </div>
+                        </ng-container>
+                        <!-- Message Text -->
+                        <div>
+                          <!-- <p *ngIf="message?.messageText" class="m-0 message-text-custom"
                           [innerHTML]="message?.messageText | highlight: searchQuery"></p> -->
                           <p
-                          *ngIf="message?.messageText !== null"
-                          class="m-0 message-text-custom"
-                          [innerHTML]="
-                            (message?.sentBy === profileId
+                            *ngIf="message?.messageText !== null"
+                            class="m-0 message-text-custom"
+                            [innerHTML]="
+                              (message?.sentBy === profileId
                               ? (message?.messageText === 'Missed call' ? 'No answer' : message?.messageText)
                               : (message?.messageText | highlight: searchQuery) + 
                                 ((message?.messageText === 'Declined call' || message?.messageText === 'Missed call') && userChat.groupId 
                                   ? '&nbsp;from&nbsp;' + '@' + message?.Username 
-                                  : '')
-                            )" 
-                        ></p>                        
+                                    : '')
+                              ) | linkify
+                            "
+                          ></p>
 
-                        <div class="chat-meta" *ngIf="message?.metaData">
+                          <div class="chat-meta" *ngIf="message?.metaData">
                           <app-post-meta-data-card [post]="message?.metaData" class="pt-2"></app-post-meta-data-card>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </li>
+                </li>
 
-              <ng-template #renderMedia let-media="media">
-                <ng-container *ngIf="isPdf(media); else imageMedia">
-                  <div class="message" (click)="pdfView(media)">
+                <ng-template #renderMedia let-media="media">
+                  <ng-container *ngIf="isPdf(media); else imageMedia">
+                    <div class="message" (click)="pdfView(media)">
                     <fa-icon [icon]="['fas', 'file']" class="c-pointer close-icon font-44-px"></fa-icon>
-                    <p class="pdf-name text-truncate mb-0">{{ pdfmsg }}</p>
-                  </div>
-                </ng-container>
-                <ng-template #imageMedia>
-                  <ng-container *ngIf="isGif(media); else notGif">
-                    <div class="message">
-                      <img [src]="media" loading="eager" class="emoji-style h-60-px" alt="Emoji" draggable="false" />
+                      <p class="pdf-name text-truncate mb-0">{{ pdfmsg }}</p>
                     </div>
                   </ng-container>
-                  <ng-template #notGif>
+                  <ng-template #imageMedia>
+                    <ng-container *ngIf="isGif(media); else notGif">
+                      <div class="message">
+                      <img [src]="media" loading="eager" class="emoji-style h-60-px" alt="Emoji" draggable="false" />
+                      </div>
+                    </ng-container>
+                    <ng-template #notGif>
                     <ng-container *ngIf="isVideoFile(media); else imageContent">
                       <video class="w-100 h-200-px replay-message-media" [src]="media" controls></video>
-                    </ng-container>
-                    <ng-template #imageContent>
-                      <div class="replay-message-media">
+                      </ng-container>
+                      <ng-template #imageContent>
+                        <div class="replay-message-media">
                         <app-img-preview class="msgImage" classes="h-180-px" [src]="media"></app-img-preview>
-                      </div>
+                        </div>
+                      </ng-template>
                     </ng-template>
                   </ng-template>
                 </ng-template>
-              </ng-template>
 
               <ng-template #renderParentMessage let-parentMessage="parentMessage">
                 <ng-container *ngIf="parentMessage?.messageMedia; else textOnly">
                   <ng-container *ngIf="!isFileOrVideo(parentMessage?.messageMedia); else filePreview">
-                    <div class="w-100-px h-100-px">
+                      <div class="w-100-px h-100-px">
                       <app-img-preview classes="h-100-px" [src]="parentMessage?.messageMedia"></app-img-preview>
-                    </div>
-                  </ng-container>
-                  <ng-template #filePreview>
+                      </div>
+                    </ng-container>
+                    <ng-template #filePreview>
                     <div class="w-100-px h-100-px" (click)="downloadMedia(parentMessage?.messageMedia)">
                       <fa-icon [icon]="['fas', 'file']" class="c-pointer close-icon font-40-px"></fa-icon>
                       <span class="c-pdf-show">{{ parentMessage?.messageMedia }}</span>
-                    </div>
+                      </div>
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #textOnly>
+                    <p
+                      *ngIf="parentMessage?.messageText"
+                      class="m-0"
+                      [innerHTML]="parentMessage?.messageText | linkify"
+                    ></p>
                   </ng-template>
-                </ng-container>
-                <ng-template #textOnly>
-                  <p *ngIf="parentMessage?.messageText" class="m-0" [innerHTML]="parentMessage?.messageText"></p>
-                </ng-template>
                 <span class="font-12-px">{{ parentMessage?.Username }}, {{ parentMessage?.createdDate | date:
                   'dd-MM-yyyy' }}</span>
-              </ng-template>
+                </ng-template>
+              </ng-container>
             </ng-container>
-          </ng-container>
           </ul>
           <app-inline-loader *ngIf="isFileUploadInProgress && !progressValue" />
           <ng-container *ngIf="progressValue">
@@ -849,15 +887,15 @@
           class="p-2 message-content"
           [ngClass]="!sidebarClass ? 'p-sm-3' : ''"
         >
-        <ng-container *ngIf="showButton">
-          <button
-            class="scrollToBottom d-flex justify-content-center align-items-center"
-            (click)="goToFirstPage()"
-            [ngClass]="sidebarClass ? 'active' : ''"
-          >
+          <ng-container *ngIf="showButton">
+            <button
+              class="scrollToBottom d-flex justify-content-center align-items-center"
+              (click)="goToFirstPage()"
+              [ngClass]="sidebarClass ? 'active' : ''"
+            >
             <fa-icon class="c-icon-color" [icon]="['fas', 'angles-up']"></fa-icon>
-          </button>
-        </ng-container>
+            </button>
+          </ng-container>
           <div
             class="d-flex align-items-sm-center align-items-end flex-column flex-sm-row mt-2 gap-3"
           >
