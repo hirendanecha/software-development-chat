@@ -92,7 +92,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
   }
 
   checkUserTagFlag(): void {
-    if (!this.isCustomeSearch) {
+    if (this.userNameSearch.length <= 1) {
       this.userList = [];
     };
     if (this.isAllowTagUser) {
@@ -106,7 +106,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
       if (matches.length > 0) {
         let foundValidTag = false;
         for (const match of matches) {
-          const atSymbolIndex = match.index;
+          const atSymbolIndex = match.index;  
           if (cursorPosition > atSymbolIndex) {
             let textAfterAt = htmlText
               .substring(atSymbolIndex + 1, cursorPosition)
@@ -142,6 +142,9 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
           this.clearUserSearchData();
         }
       } else {
+        if (this.userList.length) {
+          this.clearUserSearchData();
+        };
         return;
       }
     }
@@ -178,6 +181,8 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     const url = matches?.[0] || extractedLinks?.[0];
     if (url) {
       if (url !== this.metaData?.url) {
+        // this.isMetaLoader = true;
+        // this.spinner.show();
         const unsubscribe$ = new Subject<void>();
         this.customerService
           .getMetaData({ url })
@@ -337,9 +342,13 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
         .subscribe({
           next: (res: any) => {
             if (res?.data?.length > 0) {
-              this.userList = res.data.filter(
-                (user) => user.Id !== this.profileId
-              );
+              this.userList = res.data.filter(user => {
+                if (user.Id !== this.profileId) {
+                  user.Username = user.Username.replace(/\s+/g, '');
+                  return true;
+                }
+                return false;
+              });
             } else {
               this.clearUserSearchData();
             }
@@ -352,9 +361,9 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
       this.customerService.getProfileList(search).subscribe({
         next: (res: any) => {
           if (res?.data?.length > 0) {
-            this.userList = res.data.filter((e: any) =>
-              e.Username.replace(/\s+/g, '').length > 0
-          );
+            this.userList = res.data.filter(user => {
+              return user.Username = user.Username.replace(/\s+/g, '');
+            });
           } else {
             this.clearUserSearchData();
           }

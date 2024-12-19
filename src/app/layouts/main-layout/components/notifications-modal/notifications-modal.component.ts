@@ -30,9 +30,11 @@ export class NotificationsModalComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const profileId = +localStorage.getItem('profileId');
     this.socketService.readNotification({ profileId }, (data) => {});
-    if (this.notificationArea) {
-      this.notificationArea.nativeElement.scrollTop = 0;
-    }
+    setTimeout(() => {
+      if (this.notificationArea) {
+        this.notificationArea.nativeElement.scrollTop = 0;
+      }
+    });
   }
 
   readUnreadNotification(postId: string, notification: any = {}): void {

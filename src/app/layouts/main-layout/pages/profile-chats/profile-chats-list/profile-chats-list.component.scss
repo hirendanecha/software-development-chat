@@ -97,6 +97,7 @@
     .replay-message-media {
       border: 1px solid var(--box-1st-color);
       border-radius: 7px;
+      max-width: fit-content;
     }
     .forward-msg {
       transform: scaleX(-1);
@@ -380,7 +381,7 @@
           }
           .replay-message-media {
             border: 1px solid var(--box-1st-color);
-            border-radius: 7px;
+            justify-self: right;
           }
         }
       }
